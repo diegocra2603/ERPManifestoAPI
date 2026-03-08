@@ -1,0 +1,105 @@
+using Application.Features.Users.DTOs;
+using Domain.Contracts.Infrastructure.Persistence;
+using Domain.Contracts.Infrastructure.Persistence.Repositories;
+using Domain.Contracts.Infrastructure.Services.BCrypt;
+using Domain.Contracts.Infrastructure.Services.Email;
+using Domain.Entities.Roles;
+using Domain.Entities.Users;
+using Domain.Primitives;
+using Domain.Primitives.Mediator;
+using Domain.ValueObjects;
+using ErrorOr;
+
+namespace Application.Features.Users.CreateWithPassword;
+
+public class CreateUserWithPasswordCommandHandler : IRequestHandler<CreateUserWithPasswordCommand, ErrorOr<UserDto>>
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IAsyncRepository<Role> _roleRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IBCryptService _bcryptService;
+    private readonly IEmailService _emailService;
+
+    public CreateUserWithPasswordCommandHandler(
+        IUserRepository userRepository,
+        IAsyncRepository<Role> roleRepository,
+        IUnitOfWork unitOfWork,
+        IBCryptService bcryptService,
+        IEmailService emailService)
+    {
+        _userRepository = userRepository;
+        _roleRepository = roleRepository;
+        _unitOfWork = unitOfWork;
+        _bcryptService = bcryptService;
+        _emailService = emailService;
+    }
+
+    public async Task<ErrorOr<UserDto>> Handle(CreateUserWithPasswordCommand request, CancellationToken cancellationToken)
+    {
+        var roleId = new RoleId(request.RoleId);
+
+        if (await _roleRepository.FirstOrDefaultAsync(x => x.Id == roleId) is not Role role)
+        {
+            return Error.Validation("Role.NotFound", "Rol no encontrado.");
+        }
+
+        if (Email.Create(request.Email) is not Email email)
+        {
+            return Error.Validation("User.EmailInvalid", "El email no es válido.");
+        }
+
+        if (await _userRepository.GetByEmailAsync(email) is not null)
+        {
+            return Error.Validation("User.EmailAlreadyExists", "El email ya está en uso.");
+        }
+
+        var passwordHash = _bcryptService.HashPassword(request.Password);
+
+        if (new User(
+            new UserId(Guid.NewGuid()),
+            email,
+            request.Name,
+            request.Code,
+            new PhoneNumber(request.PhoneNumber),
+            roleId,
+            passwordHash,
+            false,
+            string.Empty,
+            true, // IsEmailConfirmed: ya confirmado
+            AuditField.Create()
+        ) is not User user)
+        {
+            return Error.Validation("User.Invalid", "Usuario inválido.");
+        }
+
+        _userRepository.Add(user);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var emailResult = await _emailService.SendNotificationEmailAsync(
+            user.Email.Value,
+            new Dictionary<string, string>
+            {
+                ["Title"] = "Cuenta creada",
+                ["UserName"] = user.Name,
+                ["Message"] = $"Tu cuenta ha sido creada correctamente. Tu contraseña es: <strong>{request.Password}</strong>. " +
+                              "Te recomendamos cambiarla después del primer acceso por seguridad."
+            });
+
+        if (emailResult.IsError)
+        {
+            return emailResult.Errors;
+        }
+
+        return new UserDto(
+            user.Id.Value,
+            user.Email.Value,
+            user.Name,
+            user.Code,
+            user.PhoneNumber.Value,
+            user.BiometricEnabled,
+            user.IsEmailConfirmed,
+            true,
+            new RoleDto(role.Id.Value, role.Name, role.Description)
+        );
+    }
+}

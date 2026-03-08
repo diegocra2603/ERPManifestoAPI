@@ -1,0 +1,81 @@
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.env
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Oo]ut/
+bld/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# Visual Studio cache/options directory
+.vs/
+.vscode/
+.claude/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# MSTest & NUnit
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+# Coverage
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml
+
+# Build outputs
+*.dll
+*.pdb
+*.cache
+*.binlog
+MSBuild_Logs/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Others
+~$*
+*~
+.env
+*.pfx
+
+# VS Code: ignorar todo excepto configuración compartida
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# publish
+publish/
