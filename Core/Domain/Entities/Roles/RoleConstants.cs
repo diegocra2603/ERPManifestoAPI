@@ -61,33 +61,22 @@ public static class RoleConstants
         (Ids.SuperAdmin, PermissionConstants.Ids.RoleUpdate),
         (Ids.SuperAdmin, PermissionConstants.Ids.RoleDelete),
 
-        // SuperAdmin - DayOperation permissions
-        (Ids.SuperAdmin, PermissionConstants.Ids.DayOpeningCreate),
-        (Ids.SuperAdmin, PermissionConstants.Ids.DayOpeningRead),
-        (Ids.SuperAdmin, PermissionConstants.Ids.DayClosingCreate),
-        (Ids.SuperAdmin, PermissionConstants.Ids.DayClosingRead),
-
-        // SuperAdmin - Check permissions
-        (Ids.SuperAdmin, PermissionConstants.Ids.CheckCreate),
-        (Ids.SuperAdmin, PermissionConstants.Ids.CheckRead),
-        (Ids.SuperAdmin, PermissionConstants.Ids.CheckUpdate),
-        (Ids.SuperAdmin, PermissionConstants.Ids.CheckDelete),
-        (Ids.SuperAdmin, PermissionConstants.Ids.CheckPaymentCreate),
+        // SuperAdmin - JobPosition permissions
+        (Ids.SuperAdmin, PermissionConstants.Ids.JobPositionCreate),
+        (Ids.SuperAdmin, PermissionConstants.Ids.JobPositionRead),
+        (Ids.SuperAdmin, PermissionConstants.Ids.JobPositionUpdate),
+        (Ids.SuperAdmin, PermissionConstants.Ids.JobPositionDelete),
 
         // Admin - Gestión de usuarios y roles (sin eliminar)
         (Ids.Admin, PermissionConstants.Ids.UserCreate),
         (Ids.Admin, PermissionConstants.Ids.UserRead),
         (Ids.Admin, PermissionConstants.Ids.UserUpdate),
         (Ids.Admin, PermissionConstants.Ids.RoleRead),
-        (Ids.Admin, PermissionConstants.Ids.DayOpeningCreate),
-        (Ids.Admin, PermissionConstants.Ids.DayOpeningRead),
-        (Ids.Admin, PermissionConstants.Ids.DayClosingCreate),
-        (Ids.Admin, PermissionConstants.Ids.DayClosingRead),
-        (Ids.Admin, PermissionConstants.Ids.CheckCreate),
-        (Ids.Admin, PermissionConstants.Ids.CheckRead),
-        (Ids.Admin, PermissionConstants.Ids.CheckUpdate),
-        (Ids.Admin, PermissionConstants.Ids.CheckDelete),
-        (Ids.Admin, PermissionConstants.Ids.CheckPaymentCreate),
+
+        // Admin - JobPosition permissions
+        (Ids.Admin, PermissionConstants.Ids.JobPositionCreate),
+        (Ids.Admin, PermissionConstants.Ids.JobPositionRead),
+        (Ids.Admin, PermissionConstants.Ids.JobPositionUpdate),
 
         // User - Solo lectura básica
         (Ids.User, PermissionConstants.Ids.UserRead),

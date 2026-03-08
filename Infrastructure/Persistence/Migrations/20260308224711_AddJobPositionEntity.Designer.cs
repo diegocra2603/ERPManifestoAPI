@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260308224711_AddJobPositionEntity")]
+    partial class AddJobPositionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -422,34 +425,6 @@ namespace Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a1d2e3f4-b5c6-4a7b-8d9e-0f1a2b3c4d5e"),
-                            Code = "JobPosition.Create",
-                            Description = "Permite crear nuevos puestos de trabajo",
-                            Name = "Crear Puesto de Trabajo"
-                        },
-                        new
-                        {
-                            Id = new Guid("b2e3f4a5-c6d7-4b8c-9e0f-1a2b3c4d5e6f"),
-                            Code = "JobPosition.Read",
-                            Description = "Permite ver información de puestos de trabajo",
-                            Name = "Ver Puesto de Trabajo"
-                        },
-                        new
-                        {
-                            Id = new Guid("c3f4a5b6-d7e8-4c9d-0f1a-2b3c4d5e6f7a"),
-                            Code = "JobPosition.Update",
-                            Description = "Permite actualizar puestos de trabajo",
-                            Name = "Actualizar Puesto de Trabajo"
-                        },
-                        new
-                        {
-                            Id = new Guid("d4a5b6c7-e8f9-4d0e-1a2b-3c4d5e6f7a8b"),
-                            Code = "JobPosition.Delete",
-                            Description = "Permite eliminar puestos de trabajo",
-                            Name = "Eliminar Puesto de Trabajo"
-                        },
-                        new
-                        {
                             Id = new Guid("f585a827-07a3-435f-89a0-b6734842ffea"),
                             Code = "Admin.FullAccess",
                             Description = "Acceso completo a todas las funcionalidades del sistema",
@@ -610,26 +585,6 @@ namespace Persistence.Migrations
                         },
                         new
                         {
-                            RoleId = new Guid("3f039871-c926-4313-b79c-8f17e622ec59"),
-                            PermissionId = new Guid("a1d2e3f4-b5c6-4a7b-8d9e-0f1a2b3c4d5e")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("3f039871-c926-4313-b79c-8f17e622ec59"),
-                            PermissionId = new Guid("b2e3f4a5-c6d7-4b8c-9e0f-1a2b3c4d5e6f")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("3f039871-c926-4313-b79c-8f17e622ec59"),
-                            PermissionId = new Guid("c3f4a5b6-d7e8-4c9d-0f1a-2b3c4d5e6f7a")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("3f039871-c926-4313-b79c-8f17e622ec59"),
-                            PermissionId = new Guid("d4a5b6c7-e8f9-4d0e-1a2b-3c4d5e6f7a8b")
-                        },
-                        new
-                        {
                             RoleId = new Guid("1159c308-279e-4bba-bae2-e8063c6d908e"),
                             PermissionId = new Guid("a5037d95-d672-4bdf-80ea-c22bc687e85f")
                         },
@@ -692,21 +647,6 @@ namespace Persistence.Migrations
                         {
                             RoleId = new Guid("1159c308-279e-4bba-bae2-e8063c6d908e"),
                             PermissionId = new Guid("b5e6f7a8-c9d0-4e1f-2a3b-4c5d6e7f8a9b")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("1159c308-279e-4bba-bae2-e8063c6d908e"),
-                            PermissionId = new Guid("a1d2e3f4-b5c6-4a7b-8d9e-0f1a2b3c4d5e")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("1159c308-279e-4bba-bae2-e8063c6d908e"),
-                            PermissionId = new Guid("b2e3f4a5-c6d7-4b8c-9e0f-1a2b3c4d5e6f")
-                        },
-                        new
-                        {
-                            RoleId = new Guid("1159c308-279e-4bba-bae2-e8063c6d908e"),
-                            PermissionId = new Guid("c3f4a5b6-d7e8-4c9d-0f1a-2b3c4d5e6f7a")
                         },
                         new
                         {
@@ -1200,30 +1140,6 @@ namespace Persistence.Migrations
                                 new
                                 {
                                     PermissionId = new Guid("f9c0d1e2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"),
-                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                                    IsActive = true
-                                },
-                                new
-                                {
-                                    PermissionId = new Guid("a1d2e3f4-b5c6-4a7b-8d9e-0f1a2b3c4d5e"),
-                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                                    IsActive = true
-                                },
-                                new
-                                {
-                                    PermissionId = new Guid("b2e3f4a5-c6d7-4b8c-9e0f-1a2b3c4d5e6f"),
-                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                                    IsActive = true
-                                },
-                                new
-                                {
-                                    PermissionId = new Guid("c3f4a5b6-d7e8-4c9d-0f1a-2b3c4d5e6f7a"),
-                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                                    IsActive = true
-                                },
-                                new
-                                {
-                                    PermissionId = new Guid("d4a5b6c7-e8f9-4d0e-1a2b-3c4d5e6f7a8b"),
                                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                                     IsActive = true
                                 },

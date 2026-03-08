@@ -1,3 +1,4 @@
+using Domain.Entities.JobPositions;
 using Domain.Entities.Roles;
 using Domain.Entities.Sessions;
 using Domain.Primitives;
@@ -16,6 +17,7 @@ public sealed class User : AggregateRoot
         string code,
         PhoneNumber phoneNumber,
         RoleId roleId,
+        JobPositionId? jobPositionId,
         string passwordHash,
         bool biometricEnabled,
         string publicKey,
@@ -28,6 +30,7 @@ public sealed class User : AggregateRoot
         Code = code;
         PhoneNumber = phoneNumber;
         RoleId = roleId;
+        JobPositionId = jobPositionId;
         PasswordHash = passwordHash;
         BiometricEnabled = biometricEnabled;
         PublicKey = publicKey;
@@ -41,6 +44,7 @@ public sealed class User : AggregateRoot
     public string Code { get; private set; } = default!;
     public PhoneNumber PhoneNumber { get; private set; } = default!;
     public RoleId RoleId { get; private set; } = default!;
+    public JobPositionId? JobPositionId { get; private set; }
     public string PasswordHash { get; private set; } = default!;
     public bool BiometricEnabled { get; private set; }
     public string PublicKey { get; private set; } = default!;
@@ -50,6 +54,7 @@ public sealed class User : AggregateRoot
     // Relationships
     public IReadOnlyList<Session> Sessions { get; private set; } = default!;
     public Role Role { get; private set; } = default!;
+    public JobPosition? JobPosition { get; private set; }
 
     public void SetNewPassword(string passwordHash)
     {
@@ -68,13 +73,14 @@ public sealed class User : AggregateRoot
     /// <summary>
     /// Actualiza los datos de perfil del usuario.
     /// </summary>
-    public void UpdateProfile(Email email, string name, string code, PhoneNumber phoneNumber, RoleId roleId)
+    public void UpdateProfile(Email email, string name, string code, PhoneNumber phoneNumber, RoleId roleId, JobPositionId? jobPositionId)
     {
         Email = email;
         Name = name;
         Code = code;
         PhoneNumber = phoneNumber;
         RoleId = roleId;
+        JobPositionId = jobPositionId;
         AuditField = AuditField.Update();
     }
 
@@ -93,10 +99,11 @@ public sealed class User : AggregateRoot
         string code,
         PhoneNumber phoneNumber,
         RoleId roleId,
+        JobPositionId? jobPositionId,
         string passwordHash,
         bool biometricEnabled,
         string publicKey,
         bool isEmailConfirmed,
         AuditField auditField
-    ) => new User(id, email, name, code, phoneNumber, roleId, passwordHash, biometricEnabled, publicKey, isEmailConfirmed, auditField);
+    ) => new User(id, email, name, code, phoneNumber, roleId, jobPositionId, passwordHash, biometricEnabled, publicKey, isEmailConfirmed, auditField);
 }

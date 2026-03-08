@@ -11,5 +11,6 @@ public record UpdateUserCommand(
     string Code,
     string PhoneNumber,
     Guid RoleId,
+    Guid JobPositionId,
     Guid? StoreId = null,
     string? NeoNetToken = null) : IRequest<ErrorOr<UserDto>>;

@@ -1,4 +1,5 @@
 using Domain.Contracts.Infrastructure.Persistence;
+using Domain.Entities.JobPositions;
 using Domain.Entities.Permissions;
 using Domain.Entities.Roles;
 using Domain.Entities.Sessions;
@@ -23,6 +24,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext, IUn
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<JobPosition> JobPositions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

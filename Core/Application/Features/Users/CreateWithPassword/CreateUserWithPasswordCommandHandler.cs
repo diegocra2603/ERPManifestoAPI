@@ -3,6 +3,7 @@ using Domain.Contracts.Infrastructure.Persistence;
 using Domain.Contracts.Infrastructure.Persistence.Repositories;
 using Domain.Contracts.Infrastructure.Services.BCrypt;
 using Domain.Contracts.Infrastructure.Services.Email;
+using Domain.Entities.JobPositions;
 using Domain.Entities.Roles;
 using Domain.Entities.Users;
 using Domain.Primitives;
@@ -62,6 +63,7 @@ public class CreateUserWithPasswordCommandHandler : IRequestHandler<CreateUserWi
             request.Code,
             new PhoneNumber(request.PhoneNumber),
             roleId,
+            new JobPositionId(request.JobPositionId),
             passwordHash,
             false,
             string.Empty,

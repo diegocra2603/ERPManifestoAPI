@@ -10,4 +10,5 @@ public record CreateUserWithPasswordCommand(
     string Code,
     string PhoneNumber,
     Guid RoleId,
+    Guid JobPositionId,
     string Password) : IRequest<ErrorOr<UserDto>>;

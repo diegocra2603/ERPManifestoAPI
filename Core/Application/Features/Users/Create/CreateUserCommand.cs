@@ -9,4 +9,5 @@ public record CreateUserCommand(
     string Name,
     string Code,
     string PhoneNumber,
-    Guid RoleId) : IRequest<ErrorOr<UserDto>>;
+    Guid RoleId,
+    Guid JobPositionId) : IRequest<ErrorOr<UserDto>>;

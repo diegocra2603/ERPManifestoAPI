@@ -1,3 +1,4 @@
+using Domain.Entities.JobPositions;
 using Domain.Entities.Roles;
 
 namespace Application.Features.Users.DTOs;
@@ -11,5 +12,6 @@ public record UserDto(
     bool BiometricEnabled,
     bool ConfirmEmail,
     bool IsActive,
-    RoleDto Role
+    RoleDto Role,
+    JobPositionDto? JobPosition = null
 );

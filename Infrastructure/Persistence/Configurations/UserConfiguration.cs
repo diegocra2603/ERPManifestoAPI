@@ -1,3 +1,4 @@
+using Domain.Entities.JobPositions;
 using Domain.Entities.Roles;
 using Domain.Entities.Users;
 using Domain.ValueObjects;
@@ -47,6 +48,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             id => id.Value,
             value => new RoleId(value));
 
+        builder.Property(user => user.JobPositionId)
+            .HasConversion(
+            id => id!.Value,
+            value => new JobPositionId(value));
+
         builder.OwnsOne(t => t.AuditField, audit =>
         {
             audit.Property(a => a.CreatedAt)
@@ -65,6 +71,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .WithMany()
             .HasForeignKey(u => u.RoleId)
             .IsRequired();
+
+        builder.HasOne(u => u.JobPosition)
+            .WithMany(jp => jp.Users)
+            .HasForeignKey(u => u.JobPositionId)
+            .IsRequired(false);
 
         SeedAdminUser(builder);
     }

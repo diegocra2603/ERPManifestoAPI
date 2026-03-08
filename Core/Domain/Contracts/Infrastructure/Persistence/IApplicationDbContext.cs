@@ -1,3 +1,4 @@
+using Domain.Entities.JobPositions;
 using Domain.Entities.Permissions;
 using Domain.Entities.Roles;
 using Domain.Entities.Sessions;
@@ -13,6 +14,7 @@ public interface IApplicationDbContext
     DbSet<RolePermission> RolePermissions { get; set; }
     DbSet<Permission> Permissions { get; set; }
     DbSet<Session> Sessions { get; set; }
+    DbSet<JobPosition> JobPositions { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
