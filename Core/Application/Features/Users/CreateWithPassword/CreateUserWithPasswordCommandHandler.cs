@@ -101,7 +101,8 @@ public class CreateUserWithPasswordCommandHandler : IRequestHandler<CreateUserWi
             user.BiometricEnabled,
             user.IsEmailConfirmed,
             true,
-            new RoleDto(role.Id.Value, role.Name, role.Description)
+            new RoleDto(role.Id.Value, role.Name, role.Description),
+            user.JobPosition is not null ? new JobPositionDto(user.JobPosition.Id.Value, user.JobPosition.Name, user.JobPosition.Description, user.JobPosition.HourlyCost) : null
         );
     }
 }

@@ -19,6 +19,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return await _context.Users
             .Include(u => u.Role)
             .ThenInclude(r => r.Permissions)
+            .Include(u => u.JobPosition)
             .Where(u => u.Code == code)
             .FirstOrDefaultAsync();
     }
@@ -28,6 +29,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         var users = await _context.Users
             .Include(u => u.Role)
             .ThenInclude(r => r.Permissions)
+            .Include(u => u.JobPosition)
             .Where(u => u.Email == email)
             .ToListAsync();
 
@@ -39,6 +41,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return await _context.Users
             .Include(u => u.Role)
             .ThenInclude(r => r.Permissions)
+            .Include(u => u.JobPosition)
             .Where(u => u.Id == userId)
             .FirstOrDefaultAsync();
     }
@@ -47,6 +50,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     {
         return await _context.Users
             .Include(u => u.Role)
+            .Include(u => u.JobPosition)
             .AsNoTracking()
             .ToListAsync();
     }

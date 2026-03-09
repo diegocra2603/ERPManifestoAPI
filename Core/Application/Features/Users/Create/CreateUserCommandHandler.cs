@@ -105,7 +105,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Error
             user.BiometricEnabled,
             user.IsEmailConfirmed,
             true, // IsActive - usuario recién creado
-            new RoleDto(role.Id.Value, role.Name, role.Description)
+            new RoleDto(role.Id.Value, role.Name, role.Description),
+            user.JobPosition is not null ? new JobPositionDto(user.JobPosition.Id.Value, user.JobPosition.Name, user.JobPosition.Description, user.JobPosition.HourlyCost) : null
         );
     }
 }

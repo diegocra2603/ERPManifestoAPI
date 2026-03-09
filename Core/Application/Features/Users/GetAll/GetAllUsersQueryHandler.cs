@@ -1,5 +1,6 @@
 using Application.Features.Users.DTOs;
 using Domain.Contracts.Infrastructure.Persistence.Repositories;
+using Domain.Entities.JobPositions;
 using Domain.Entities.Roles;
 using Domain.Primitives.Mediator;
 using ErrorOr;
@@ -29,7 +30,8 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, ErrorOr
                 user.BiometricEnabled,
                 user.IsEmailConfirmed,
                 user.AuditField.IsActive,
-                new RoleDto(user.Role.Id.Value, user.Role.Name, user.Role.Description)
+                new RoleDto(user.Role.Id.Value, user.Role.Name, user.Role.Description),
+                user.JobPosition is not null ? new JobPositionDto(user.JobPosition.Id.Value, user.JobPosition.Name, user.JobPosition.Description, user.JobPosition.HourlyCost) : null
             ))
             .ToList()
             .AsReadOnly();
