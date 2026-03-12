@@ -1,4 +1,5 @@
 using Domain.Contracts.Infrastructure.Persistence;
+using Domain.Entities.FiscalData;
 using Domain.Entities.JobPositions;
 using Domain.Entities.Permissions;
 using Domain.Entities.Roles;
@@ -25,6 +26,7 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext, IUn
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Session> Sessions { get; set; }
     public DbSet<JobPosition> JobPositions { get; set; }
+    public DbSet<FiscalDataEntry> FiscalDataEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
