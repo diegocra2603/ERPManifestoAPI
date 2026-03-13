@@ -13,23 +13,11 @@ namespace Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "tipo_venta",
-                table: "fiscal_documents",
-                type: "integer",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "character varying(1)",
-                oldMaxLength: 1);
+            migrationBuilder.Sql(
+                "ALTER TABLE fiscal_documents ALTER COLUMN tipo_venta TYPE integer USING tipo_venta::integer;");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "sale_type",
-                table: "fiscal_document_items",
-                type: "integer",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "character varying(1)",
-                oldMaxLength: 1);
+            migrationBuilder.Sql(
+                "ALTER TABLE fiscal_document_items ALTER COLUMN sale_type TYPE integer USING sale_type::integer;");
 
             migrationBuilder.CreateTable(
                 name: "system_settings",

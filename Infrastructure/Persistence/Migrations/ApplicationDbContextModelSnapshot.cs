@@ -1040,7 +1040,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("BriefId");
 
-                            b1.ToTable("briefs");
+                            b1.ToTable("briefs", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("BriefId")
@@ -1093,7 +1093,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("FiscalDataEntryId");
 
-                            b1.ToTable("fiscal_data_entries");
+                            b1.ToTable("fiscal_data_entries", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("FiscalDataEntryId")
@@ -1132,7 +1132,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("FiscalDocumentId");
 
-                            b1.ToTable("fiscal_documents");
+                            b1.ToTable("fiscal_documents", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("FiscalDocumentId")
@@ -1183,7 +1183,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("JobPositionId");
 
-                            b1.ToTable("job_positions");
+                            b1.ToTable("job_positions", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("JobPositionId")
@@ -1222,7 +1222,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("PermissionId");
 
-                            b1.ToTable("permissions");
+                            b1.ToTable("permissions", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("PermissionId")
@@ -1401,7 +1401,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("ProductId");
 
-                            b1.ToTable("products");
+                            b1.ToTable("products", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ProductId")
@@ -1461,7 +1461,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("RoleId");
 
-                            b1.ToTable("roles");
+                            b1.ToTable("roles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("RoleId")
@@ -1548,7 +1548,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("SessionId");
 
-                            b1.ToTable("sessions");
+                            b1.ToTable("sessions", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SessionId")
@@ -1587,7 +1587,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("SystemSettingId");
 
-                            b1.ToTable("system_settings");
+                            b1.ToTable("system_settings", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SystemSettingId")
@@ -1638,7 +1638,7 @@ namespace Persistence.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("users");
+                            b1.ToTable("users", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId")
