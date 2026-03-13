@@ -35,6 +35,18 @@ public static class PermissionConstants
         public static readonly Guid SettingRead = new("e5b6c7d8-f9a0-4e1f-2b3c-4d5e6f7a8b9c");
         public static readonly Guid SettingUpdate = new("f6c7d8e9-a0b1-4f2a-3c4d-5e6f7a8b9c0d");
 
+        // Permisos de Product
+        public static readonly Guid ProductCreate = new("11a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b4c");
+        public static readonly Guid ProductRead = new("22b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d");
+        public static readonly Guid ProductUpdate = new("33c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e");
+        public static readonly Guid ProductDelete = new("44d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f");
+
+        // Permisos de Brief
+        public static readonly Guid BriefCreate = new("55e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a");
+        public static readonly Guid BriefRead = new("66f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b");
+        public static readonly Guid BriefUpdate = new("77a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c");
+        public static readonly Guid BriefDelete = new("88b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d");
+
         // Permisos de Administración
         public static readonly Guid AdminFullAccess = new("f585a827-07a3-435f-89a0-b6734842ffea");
     }
@@ -65,6 +77,18 @@ public static class PermissionConstants
         // Permisos de SystemSetting
         public const string SettingRead = "Setting.Read";
         public const string SettingUpdate = "Setting.Update";
+
+        // Permisos de Product
+        public const string ProductCreate = "Product.Create";
+        public const string ProductRead = "Product.Read";
+        public const string ProductUpdate = "Product.Update";
+        public const string ProductDelete = "Product.Delete";
+
+        // Permisos de Brief
+        public const string BriefCreate = "Brief.Create";
+        public const string BriefRead = "Brief.Read";
+        public const string BriefUpdate = "Brief.Update";
+        public const string BriefDelete = "Brief.Delete";
 
         // Permisos de Administración
         public const string AdminFullAccess = "Admin.FullAccess";
@@ -101,6 +125,18 @@ public static class PermissionConstants
         // Permisos de SystemSetting
         CreatePermission(Ids.SettingRead, "Ver Configuración", "Permite ver configuraciones del sistema", Codes.SettingRead),
         CreatePermission(Ids.SettingUpdate, "Actualizar Configuración", "Permite actualizar configuraciones del sistema", Codes.SettingUpdate),
+
+        // Permisos de Product
+        CreatePermission(Ids.ProductCreate, "Crear Producto", "Permite crear nuevos productos", Codes.ProductCreate),
+        CreatePermission(Ids.ProductRead, "Ver Producto", "Permite ver información de productos", Codes.ProductRead),
+        CreatePermission(Ids.ProductUpdate, "Actualizar Producto", "Permite actualizar productos", Codes.ProductUpdate),
+        CreatePermission(Ids.ProductDelete, "Eliminar Producto", "Permite eliminar productos", Codes.ProductDelete),
+
+        // Permisos de Brief
+        CreatePermission(Ids.BriefCreate, "Crear Brief", "Permite crear nuevos briefs", Codes.BriefCreate),
+        CreatePermission(Ids.BriefRead, "Ver Brief", "Permite ver información de briefs", Codes.BriefRead),
+        CreatePermission(Ids.BriefUpdate, "Actualizar Brief", "Permite actualizar briefs", Codes.BriefUpdate),
+        CreatePermission(Ids.BriefDelete, "Eliminar Brief", "Permite eliminar briefs", Codes.BriefDelete),
 
         // Permisos de Administración
         CreatePermission(Ids.AdminFullAccess, "Acceso Total", "Acceso completo a todas las funcionalidades del sistema", Codes.AdminFullAccess),
