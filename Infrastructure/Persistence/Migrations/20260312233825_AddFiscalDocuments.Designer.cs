@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312233825_AddFiscalDocuments")]
+    partial class AddFiscalDocuments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,8 +184,10 @@ namespace Persistence.Migrations
                         .HasColumnType("numeric(10,6)")
                         .HasColumnName("tasa");
 
-                    b.Property<int>("TipoVenta")
-                        .HasColumnType("integer")
+                    b.Property<string>("TipoVenta")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)")
                         .HasColumnName("tipo_venta");
 
                     b.Property<decimal>("Total")
@@ -282,8 +287,10 @@ namespace Persistence.Migrations
                         .HasColumnType("numeric(20,5)")
                         .HasColumnName("quantity");
 
-                    b.Property<int>("SaleType")
-                        .HasColumnType("integer")
+                    b.Property<string>("SaleType")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)")
                         .HasColumnName("sale_type");
 
                     b.Property<decimal>("TotalAmount")
@@ -438,20 +445,6 @@ namespace Persistence.Migrations
                             Code = "JobPosition.Delete",
                             Description = "Permite eliminar puestos de trabajo",
                             Name = "Eliminar Puesto de Trabajo"
-                        },
-                        new
-                        {
-                            Id = new Guid("e5b6c7d8-f9a0-4e1f-2b3c-4d5e6f7a8b9c"),
-                            Code = "Setting.Read",
-                            Description = "Permite ver configuraciones del sistema",
-                            Name = "Ver Configuración"
-                        },
-                        new
-                        {
-                            Id = new Guid("f6c7d8e9-a0b1-4f2a-3c4d-5e6f7a8b9c0d"),
-                            Code = "Setting.Update",
-                            Description = "Permite actualizar configuraciones del sistema",
-                            Name = "Actualizar Configuración"
                         },
                         new
                         {
@@ -657,40 +650,6 @@ namespace Persistence.Migrations
                         .HasDatabaseName("ix_sessions_user_id");
 
                     b.ToTable("sessions", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.SystemSettings.SystemSetting", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("key");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("value");
-
-                    b.HasKey("Id")
-                        .HasName("pk_system_settings");
-
-                    b.HasIndex("Key")
-                        .IsUnique()
-                        .HasDatabaseName("ix_system_settings_key");
-
-                    b.ToTable("system_settings", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Users.User", b =>
@@ -1022,18 +981,6 @@ namespace Persistence.Migrations
                                 },
                                 new
                                 {
-                                    PermissionId = new Guid("e5b6c7d8-f9a0-4e1f-2b3c-4d5e6f7a8b9c"),
-                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                                    IsActive = true
-                                },
-                                new
-                                {
-                                    PermissionId = new Guid("f6c7d8e9-a0b1-4f2a-3c4d-5e6f7a8b9c0d"),
-                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                                    IsActive = true
-                                },
-                                new
-                                {
                                     PermissionId = new Guid("f585a827-07a3-435f-89a0-b6734842ffea"),
                                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                                     IsActive = true
@@ -1164,45 +1111,6 @@ namespace Persistence.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("SessionId")
                                 .HasConstraintName("fk_sessions_sessions_id");
-                        });
-
-                    b.Navigation("AuditField")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.SystemSettings.SystemSetting", b =>
-                {
-                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
-                        {
-                            b1.Property<Guid>("SystemSettingId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<DateTime>("CreatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("audit_field_created_at");
-
-                            b1.Property<DateTime?>("DeletedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("audit_field_deleted_at");
-
-                            b1.Property<bool>("IsActive")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("boolean")
-                                .HasDefaultValue(true)
-                                .HasColumnName("audit_field_is_active");
-
-                            b1.Property<DateTime?>("UpdatedAt")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("audit_field_updated_at");
-
-                            b1.HasKey("SystemSettingId");
-
-                            b1.ToTable("system_settings");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SystemSettingId")
-                                .HasConstraintName("fk_system_settings_system_settings_id");
                         });
 
                     b.Navigation("AuditField")

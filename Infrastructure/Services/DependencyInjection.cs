@@ -4,12 +4,14 @@ using Domain.Contracts.Infrastructure.Services.BCrypt;
 using Domain.Contracts.Infrastructure.Services.Token;
 using Domain.Contracts.Infrastructure.Services.Email;
 using Domain.Contracts.Infrastructure.Services.FiscalDataValidator;
+using Domain.Contracts.Infrastructure.Services.FiscalDocument;
 using Domain.Contracts.Infrastructure.Services.Files;
 using Domain.Contracts.Infrastructure.Services.ImageCompressor;
 using Services.BCrypt;
 using Services.Token;
 using Services.Email;
 using Services.FiscalDataValidator;
+using Services.FiscalDocument;
 using Services.Files;
 using Services.ImageCompressor;
 
@@ -36,8 +38,11 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IImageCompressorService, ImageCompressorService>();
         services.AddScoped<IFileService, FilesService>();
+        services.Configure<FiscalDocumentConfiguration>(configuration.GetSection(FiscalDocumentConfiguration.SectionName));
+
         services.AddHttpClient();
         services.AddScoped<IFiscalDataValidatorService, InnovaFiscalDataValidatorService>();
+        services.AddScoped<IFiscalDocumentService, InnovaFiscalDocumentService>();
 
         return services;
     }

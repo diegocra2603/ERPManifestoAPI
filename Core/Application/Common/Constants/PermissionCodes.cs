@@ -26,6 +26,10 @@ public static class PermissionCodes
     public const string JobPositionUpdate = PermissionConstants.Codes.JobPositionUpdate;
     public const string JobPositionDelete = PermissionConstants.Codes.JobPositionDelete;
 
+    // Permisos de SystemSetting
+    public const string SettingRead = PermissionConstants.Codes.SettingRead;
+    public const string SettingUpdate = PermissionConstants.Codes.SettingUpdate;
+
     // Permisos de Administración
     public const string AdminFullAccess = PermissionConstants.Codes.AdminFullAccess;
 }

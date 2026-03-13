@@ -31,6 +31,10 @@ public static class PermissionConstants
         public static readonly Guid JobPositionUpdate = new("c3f4a5b6-d7e8-4c9d-0f1a-2b3c4d5e6f7a");
         public static readonly Guid JobPositionDelete = new("d4a5b6c7-e8f9-4d0e-1a2b-3c4d5e6f7a8b");
 
+        // Permisos de SystemSetting
+        public static readonly Guid SettingRead = new("e5b6c7d8-f9a0-4e1f-2b3c-4d5e6f7a8b9c");
+        public static readonly Guid SettingUpdate = new("f6c7d8e9-a0b1-4f2a-3c4d-5e6f7a8b9c0d");
+
         // Permisos de Administración
         public static readonly Guid AdminFullAccess = new("f585a827-07a3-435f-89a0-b6734842ffea");
     }
@@ -57,6 +61,10 @@ public static class PermissionConstants
         public const string JobPositionRead = "JobPosition.Read";
         public const string JobPositionUpdate = "JobPosition.Update";
         public const string JobPositionDelete = "JobPosition.Delete";
+
+        // Permisos de SystemSetting
+        public const string SettingRead = "Setting.Read";
+        public const string SettingUpdate = "Setting.Update";
 
         // Permisos de Administración
         public const string AdminFullAccess = "Admin.FullAccess";
@@ -89,6 +97,10 @@ public static class PermissionConstants
         CreatePermission(Ids.JobPositionRead, "Ver Puesto de Trabajo", "Permite ver información de puestos de trabajo", Codes.JobPositionRead),
         CreatePermission(Ids.JobPositionUpdate, "Actualizar Puesto de Trabajo", "Permite actualizar puestos de trabajo", Codes.JobPositionUpdate),
         CreatePermission(Ids.JobPositionDelete, "Eliminar Puesto de Trabajo", "Permite eliminar puestos de trabajo", Codes.JobPositionDelete),
+
+        // Permisos de SystemSetting
+        CreatePermission(Ids.SettingRead, "Ver Configuración", "Permite ver configuraciones del sistema", Codes.SettingRead),
+        CreatePermission(Ids.SettingUpdate, "Actualizar Configuración", "Permite actualizar configuraciones del sistema", Codes.SettingUpdate),
 
         // Permisos de Administración
         CreatePermission(Ids.AdminFullAccess, "Acceso Total", "Acceso completo a todas las funcionalidades del sistema", Codes.AdminFullAccess),
