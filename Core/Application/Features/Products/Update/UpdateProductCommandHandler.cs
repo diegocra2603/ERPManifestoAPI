@@ -28,7 +28,8 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             includes: new()
             {
                 p => p.JobPositions
-            });
+            },
+            disableTracking: false);
 
         var product = products.FirstOrDefault();
 

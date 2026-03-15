@@ -28,11 +28,6 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasForeignKey(jp => jp.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(p => p.Briefs)
-            .WithOne(b => b.Product)
-            .HasForeignKey(b => b.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.OwnsOne(t => t.AuditField, audit =>
         {
             audit.Property(a => a.CreatedAt)

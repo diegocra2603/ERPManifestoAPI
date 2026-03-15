@@ -1,7 +1,6 @@
 using Domain.Contracts.Infrastructure.Persistence;
 using Domain.Entities.FiscalData;
 using Domain.Entities.FiscalDocuments;
-using Domain.Entities.Briefs;
 using Domain.Entities.Products;
 using Domain.Entities.SystemSettings;
 using Domain.Entities.JobPositions;
@@ -36,8 +35,6 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext, IUn
     public DbSet<SystemSetting> SystemSettings { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductJobPosition> ProductJobPositions { get; set; }
-    public DbSet<Brief> Briefs { get; set; }
-    public DbSet<BriefItem> BriefItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

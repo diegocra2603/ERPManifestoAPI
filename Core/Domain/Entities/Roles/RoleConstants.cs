@@ -67,6 +67,16 @@ public static class RoleConstants
         (Ids.SuperAdmin, PermissionConstants.Ids.JobPositionUpdate),
         (Ids.SuperAdmin, PermissionConstants.Ids.JobPositionDelete),
 
+        // SuperAdmin - SystemSetting permissions
+        (Ids.SuperAdmin, PermissionConstants.Ids.SettingRead),
+        (Ids.SuperAdmin, PermissionConstants.Ids.SettingUpdate),
+
+        // SuperAdmin - Product permissions
+        (Ids.SuperAdmin, PermissionConstants.Ids.ProductCreate),
+        (Ids.SuperAdmin, PermissionConstants.Ids.ProductRead),
+        (Ids.SuperAdmin, PermissionConstants.Ids.ProductUpdate),
+        (Ids.SuperAdmin, PermissionConstants.Ids.ProductDelete),
+
         // Admin - Gestión de usuarios y roles (sin eliminar)
         (Ids.Admin, PermissionConstants.Ids.UserCreate),
         (Ids.Admin, PermissionConstants.Ids.UserRead),
@@ -77,6 +87,15 @@ public static class RoleConstants
         (Ids.Admin, PermissionConstants.Ids.JobPositionCreate),
         (Ids.Admin, PermissionConstants.Ids.JobPositionRead),
         (Ids.Admin, PermissionConstants.Ids.JobPositionUpdate),
+
+        // Admin - SystemSetting permissions
+        (Ids.Admin, PermissionConstants.Ids.SettingRead),
+        (Ids.Admin, PermissionConstants.Ids.SettingUpdate),
+
+        // Admin - Product permissions
+        (Ids.Admin, PermissionConstants.Ids.ProductCreate),
+        (Ids.Admin, PermissionConstants.Ids.ProductRead),
+        (Ids.Admin, PermissionConstants.Ids.ProductUpdate),
 
         // User - Solo lectura básica
         (Ids.User, PermissionConstants.Ids.UserRead),

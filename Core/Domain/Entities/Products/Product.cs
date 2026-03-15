@@ -1,4 +1,3 @@
-using Domain.Entities.Briefs;
 using Domain.Entities.JobPositions;
 using Domain.Primitives;
 using Domain.ValueObjects;
@@ -8,8 +7,6 @@ namespace Domain.Entities.Products;
 public sealed class Product : AggregateRoot
 {
     private readonly List<ProductJobPosition> _jobPositions = new();
-    private readonly List<Brief> _briefs = new();
-
     private Product() { }
 
     public Product(
@@ -30,8 +27,6 @@ public sealed class Product : AggregateRoot
     public AuditField AuditField { get; private set; } = default!;
 
     public IReadOnlyCollection<ProductJobPosition> JobPositions => _jobPositions.AsReadOnly();
-    public IReadOnlyCollection<Brief> Briefs => _briefs.AsReadOnly();
-
     /// <summary>
     /// Costo total calculado: suma de (horas × costo por hora) de cada puesto asignado.
     /// </summary>

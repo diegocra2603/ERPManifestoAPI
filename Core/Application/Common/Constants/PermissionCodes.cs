@@ -36,12 +36,6 @@ public static class PermissionCodes
     public const string ProductUpdate = PermissionConstants.Codes.ProductUpdate;
     public const string ProductDelete = PermissionConstants.Codes.ProductDelete;
 
-    // Permisos de Brief
-    public const string BriefCreate = PermissionConstants.Codes.BriefCreate;
-    public const string BriefRead = PermissionConstants.Codes.BriefRead;
-    public const string BriefUpdate = PermissionConstants.Codes.BriefUpdate;
-    public const string BriefDelete = PermissionConstants.Codes.BriefDelete;
-
     // Permisos de Administración
     public const string AdminFullAccess = PermissionConstants.Codes.AdminFullAccess;
 }

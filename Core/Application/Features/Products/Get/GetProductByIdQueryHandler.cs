@@ -20,10 +20,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, E
 
         var products = await _productRepository.GetAsync(
             predicate: p => p.Id == productId && p.AuditField.IsActive,
-            includes: new()
-            {
-                p => p.JobPositions
-            });
+            includeString: "JobPositions.JobPosition");
 
         var product = products.FirstOrDefault();
 

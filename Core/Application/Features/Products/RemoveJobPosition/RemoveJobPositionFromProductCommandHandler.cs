@@ -31,7 +31,8 @@ public class RemoveJobPositionFromProductCommandHandler : IRequestHandler<Remove
             includes: new()
             {
                 p => p.JobPositions
-            });
+            },
+            disableTracking: false);
 
         var product = products.FirstOrDefault();
 

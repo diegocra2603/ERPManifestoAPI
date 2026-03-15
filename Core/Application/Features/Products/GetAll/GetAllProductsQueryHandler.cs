@@ -18,10 +18,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, E
     {
         var products = await _productRepository.GetAsync(
             predicate: p => p.AuditField.IsActive,
-            includes: new()
-            {
-                p => p.JobPositions
-            });
+            includeString: "JobPositions.JobPosition");
 
         return products
             .Select(p => new ProductDto(

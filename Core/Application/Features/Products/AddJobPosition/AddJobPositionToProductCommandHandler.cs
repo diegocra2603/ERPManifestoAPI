@@ -32,7 +32,8 @@ public class AddJobPositionToProductCommandHandler : IRequestHandler<AddJobPosit
             includes: new()
             {
                 p => p.JobPositions
-            });
+            },
+            disableTracking: false);
 
         var product = products.FirstOrDefault();
 
