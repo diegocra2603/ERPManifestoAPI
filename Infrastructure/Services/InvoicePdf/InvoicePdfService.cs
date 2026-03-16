@@ -140,7 +140,9 @@ public sealed class InvoicePdfService : IInvoicePdfService
                         c.Item().Text("DOCUMENTO EN CONTINGENCIA")
                             .FontSize(11).Bold().FontColor("#92400E").AlignCenter();
                         c.Item().Text($"N\u00famero de Acceso: {numAcceso}")
-                            .FontSize(9).FontColor("#92400E").AlignCenter();
+                            .FontSize(10).Bold().FontColor("#92400E").AlignCenter();
+                        c.Item().PaddingTop(4).Text("Utilice este n\u00famero de acceso para consultar el estado de su factura una vez sea certificada.")
+                            .FontSize(8).FontColor("#92400E").AlignCenter();
                     });
             }
 
@@ -153,7 +155,7 @@ public sealed class InvoicePdfService : IInvoicePdfService
                 row.RelativeItem().Column(left =>
                 {
                     DetailLabel(left, "Fecha de Emisi\u00f3n");
-                    left.Item().Text(invoice.Date.ToString("dd/MM/yyyy"))
+                    left.Item().Text(invoice.Date.ToString("dd/MM/yyyy HH:mm"))
                         .FontSize(9).FontColor("#1A1A1A");
                     left.Item().PaddingTop(6);
 
@@ -307,6 +309,29 @@ public sealed class InvoicePdfService : IInvoicePdfService
                 col.Item().PaddingTop(4);
                 col.Item().Text(invoice.Notes)
                     .FontSize(8).FontColor("#666666").LineHeight(1.4f);
+            }
+
+            // Certificador data at the bottom
+            if (!string.IsNullOrWhiteSpace(_config.NitCertificador))
+            {
+                col.Item().PaddingTop(24);
+                col.Item().LineHorizontal(0.5f).LineColor("#E0E0E0");
+                col.Item().PaddingTop(8);
+                col.Item().Text("Datos del Certificador")
+                    .FontSize(8).Bold().FontColor("#AAAAAA");
+                col.Item().PaddingTop(4).Row(row =>
+                {
+                    row.RelativeItem().Column(c =>
+                    {
+                        c.Item().Text("NIT Certificador").FontSize(7).FontColor("#AAAAAA");
+                        c.Item().Text(_config.NitCertificador).FontSize(8).FontColor("#1A1A1A");
+                    });
+                    row.RelativeItem().Column(c =>
+                    {
+                        c.Item().Text("Nombre Certificador").FontSize(7).FontColor("#AAAAAA");
+                        c.Item().Text(_config.NombreCertificador).FontSize(8).FontColor("#1A1A1A");
+                    });
+                });
             }
         });
     }

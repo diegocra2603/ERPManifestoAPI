@@ -131,6 +131,9 @@ public class InnovaFiscalDocumentService : IFiscalDocumentService
             if (isConnectionError)
             {
                 document.MarkAsContingency(GenerateLocalAccessNumber());
+                // Rebuild XML with NumeroAcceso included for contingency upload
+                var contingencyXml = BuildDocumentXml(document, calculatedItems);
+                document.SetXmlEnviado(contingencyXml);
                 _documentRepository.Add(document);
                 await _unitOfWork.SaveChangesAsync();
 

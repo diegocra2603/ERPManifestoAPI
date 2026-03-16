@@ -14,4 +14,6 @@ public class FiscalDocumentConfiguration
     public string IdMaquina { get; set; } = "1";
     public string NombreComercial { get; set; } = default!;
     public string DireccionEmisor { get; set; } = default!;
+    public string NitCertificador { get; set; } = default!;
+    public string NombreCertificador { get; set; } = default!;
 }
