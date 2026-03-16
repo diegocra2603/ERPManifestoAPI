@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Domain.Contracts.Infrastructure.Persistence;
 using Domain.Contracts.Infrastructure.Services.FiscalDocument;
+using Domain.Contracts.Infrastructure.Services.InvoiceAccounting;
 using Domain.Entities.Accounting;
 using Domain.Entities.Accounting.Enums;
 using Domain.Entities.FiscalDocuments;
@@ -16,17 +17,20 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
     private readonly IAsyncRepository<TaxConfiguration> _taxConfigRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IFiscalDocumentService _fiscalDocumentService;
+    private readonly IInvoiceAccountingService _accountingService;
 
     public EmitInvoiceCommandHandler(
         IAsyncRepository<Invoice> invoiceRepository,
         IAsyncRepository<TaxConfiguration> taxConfigRepository,
         IUnitOfWork unitOfWork,
-        IFiscalDocumentService fiscalDocumentService)
+        IFiscalDocumentService fiscalDocumentService,
+        IInvoiceAccountingService accountingService)
     {
         _invoiceRepository = invoiceRepository;
         _taxConfigRepository = taxConfigRepository;
         _unitOfWork = unitOfWork;
         _fiscalDocumentService = fiscalDocumentService;
+        _accountingService = accountingService;
     }
 
     public async Task<ErrorOr<InvoiceDto>> Handle(EmitInvoiceCommand request, CancellationToken cancellationToken)
@@ -105,30 +109,31 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
 
         var fiscalDoc = fiscalResult.Value;
 
-        // Check if it was certified or went to contingency
+        // Set fiscal data and emit
         if (fiscalDoc.Status == FiscalDocumentStatus.Certified &&
             !string.IsNullOrEmpty(fiscalDoc.Serie))
         {
             invoice.SetFiscalData(fiscalDoc.Serie, fiscalDoc.Preimpreso, fiscalDoc.NumeroAutorizacion);
-            invoice.Emit();
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return InvoiceMapper.MapToDto(invoice);
         }
-
-        if (fiscalDoc.Status == FiscalDocumentStatus.Contingency)
+        else if (fiscalDoc.Status == FiscalDocumentStatus.Contingency)
         {
             invoice.SetFiscalData(
                 $"CONTINGENCIA-{fiscalDoc.NumeroAcceso}",
                 fiscalDoc.NumeroAcceso?.ToString() ?? "0",
                 "PENDIENTE - Documento en contingencia");
-            invoice.Emit();
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return InvoiceMapper.MapToDto(invoice);
+        }
+        else
+        {
+            invoice.SetFiscalData(fiscalDoc.Serie, fiscalDoc.Preimpreso, fiscalDoc.NumeroAutorizacion);
         }
 
-        // Unexpected status
-        invoice.SetFiscalData(fiscalDoc.Serie, fiscalDoc.Preimpreso, fiscalDoc.NumeroAutorizacion);
         invoice.Emit();
+
+        // Create journal entry for the emitted invoice
+        var journalResult = await _accountingService.CreateJournalEntryForEmissionAsync(invoice, cancellationToken);
+        if (journalResult.IsError)
+            return journalResult.Errors;
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return InvoiceMapper.MapToDto(invoice);
     }

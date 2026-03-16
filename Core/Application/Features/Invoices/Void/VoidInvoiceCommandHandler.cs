@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using Domain.Contracts.Infrastructure.Persistence;
 using Domain.Contracts.Infrastructure.Services.FiscalDocument;
+using Domain.Contracts.Infrastructure.Services.InvoiceAccounting;
 using Domain.Entities.Accounting;
 using Domain.Entities.Accounting.Enums;
 using Domain.Primitives;
@@ -13,21 +15,34 @@ public class VoidInvoiceCommandHandler : IRequestHandler<VoidInvoiceCommand, Err
     private readonly IAsyncRepository<Invoice> _invoiceRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IFiscalDocumentService _fiscalDocumentService;
+    private readonly IInvoiceAccountingService _accountingService;
 
     public VoidInvoiceCommandHandler(
         IAsyncRepository<Invoice> invoiceRepository,
         IUnitOfWork unitOfWork,
-        IFiscalDocumentService fiscalDocumentService)
+        IFiscalDocumentService fiscalDocumentService,
+        IInvoiceAccountingService accountingService)
     {
         _invoiceRepository = invoiceRepository;
         _unitOfWork = unitOfWork;
         _fiscalDocumentService = fiscalDocumentService;
+        _accountingService = accountingService;
     }
 
     public async Task<ErrorOr<bool>> Handle(VoidInvoiceCommand request, CancellationToken cancellationToken)
     {
-        var invoice = await _invoiceRepository.FirstOrDefaultAsync(
-            i => i.Id == new InvoiceId(request.Id) && i.AuditField.IsActive);
+        var includes = new List<Expression<Func<Invoice, object>>>
+        {
+            e => e.Items,
+            e => e.Currency
+        };
+
+        var invoices = await _invoiceRepository.GetAsync(
+            predicate: i => i.Id == new InvoiceId(request.Id) && i.AuditField.IsActive,
+            includes: includes,
+            disableTracking: false);
+
+        var invoice = invoices.FirstOrDefault();
 
         if (invoice is null)
             return Error.NotFound("Invoice.NotFound", "Factura no encontrada.");
@@ -53,6 +68,14 @@ public class VoidInvoiceCommandHandler : IRequestHandler<VoidInvoiceCommand, Err
 
             if (voidResult.IsError)
                 return voidResult.Errors;
+        }
+
+        // Create reversal journal entry if there's an original
+        if (invoice.JournalEntryId is not null)
+        {
+            var reversalResult = await _accountingService.CreateReversalJournalEntryAsync(invoice, cancellationToken);
+            if (reversalResult.IsError)
+                return reversalResult.Errors;
         }
 
         invoice.Void();
