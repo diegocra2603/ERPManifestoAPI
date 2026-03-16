@@ -36,6 +36,13 @@ public static class PermissionCodes
     public const string ProductUpdate = PermissionConstants.Codes.ProductUpdate;
     public const string ProductDelete = PermissionConstants.Codes.ProductDelete;
 
+    // Permisos de Contabilidad
+    public const string AccountingCreate = PermissionConstants.Codes.AccountingCreate;
+    public const string AccountingRead = PermissionConstants.Codes.AccountingRead;
+    public const string AccountingUpdate = PermissionConstants.Codes.AccountingUpdate;
+    public const string AccountingDelete = PermissionConstants.Codes.AccountingDelete;
+    public const string AccountingClose = PermissionConstants.Codes.AccountingClose;
+
     // Permisos de Administración
     public const string AdminFullAccess = PermissionConstants.Codes.AdminFullAccess;
 }

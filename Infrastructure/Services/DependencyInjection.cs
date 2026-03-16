@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.Configure<EmailConfiguration>(configuration.GetSection(EmailConfiguration.SectionName));
         services.Configure<FilesConfiguration>(configuration.GetSection(FilesConfiguration.SectionName));
         services.Configure<FiscalDataValidatorConfiguration>(configuration.GetSection(FiscalDataValidatorConfiguration.SectionName));
+        services.Configure<FiscalDocumentConfiguration>(configuration.GetSection(FiscalDocumentConfiguration.SectionName));
 
         // Registrar TokenConfiguration para inyección directa (p. ej. en handlers de Auth)
         var tokenConfig = configuration.GetSection(TokenConfiguration.SectionName).Get<TokenConfiguration>();
@@ -38,7 +39,6 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IImageCompressorService, ImageCompressorService>();
         services.AddScoped<IFileService, FilesService>();
-        services.Configure<FiscalDocumentConfiguration>(configuration.GetSection(FiscalDocumentConfiguration.SectionName));
 
         services.AddHttpClient();
         services.AddScoped<IFiscalDataValidatorService, InnovaFiscalDataValidatorService>();

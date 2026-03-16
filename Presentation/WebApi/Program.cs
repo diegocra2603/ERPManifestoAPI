@@ -4,6 +4,9 @@ using Services;
 using WebApi;
 using WebApi.Middlewares;
 
+// Allow Npgsql to accept DateTime with Kind=Unspecified (treats as UTC)
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services

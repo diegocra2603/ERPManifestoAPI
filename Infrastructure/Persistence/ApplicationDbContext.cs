@@ -1,4 +1,5 @@
 using Domain.Contracts.Infrastructure.Persistence;
+using Domain.Entities.Accounting;
 using Domain.Entities.FiscalData;
 using Domain.Entities.FiscalDocuments;
 using Domain.Entities.Products;
@@ -11,6 +12,7 @@ using Domain.Entities.Users;
 using Domain.Primitives;
 using Domain.Primitives.Mediator;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Seed;
 
 namespace Persistence;
 
@@ -36,9 +38,24 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext, IUn
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductJobPosition> ProductJobPositions { get; set; }
 
+    // Accounting
+    public DbSet<Currency> Currencies { get; set; }
+    public DbSet<ExchangeRate> ExchangeRates { get; set; }
+    public DbSet<AccountCatalog> AccountCatalogs { get; set; }
+    public DbSet<AccountingPeriod> AccountingPeriods { get; set; }
+    public DbSet<JournalEntry> JournalEntries { get; set; }
+    public DbSet<JournalEntryLine> JournalEntryLines { get; set; }
+    public DbSet<TaxConfiguration> TaxConfigurations { get; set; }
+    public DbSet<TaxTransaction> TaxTransactions { get; set; }
+    public DbSet<Client> Clients { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<InvoiceItem> InvoiceItems { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.SeedAccountingData();
         base.OnModelCreating(modelBuilder);
     }
 

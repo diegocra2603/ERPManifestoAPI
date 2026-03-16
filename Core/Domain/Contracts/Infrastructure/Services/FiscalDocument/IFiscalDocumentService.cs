@@ -19,6 +19,8 @@ public record GenerateDocumentRequest(
     SaleType TipoVenta,
     DestinationType DestinoVenta,
     CurrencyType Moneda,
+    decimal ExchangeRate,
+    decimal TaxPercentage,
     string Referencia,
     string? SerieAdmin,
     long? NumeroAdmin,

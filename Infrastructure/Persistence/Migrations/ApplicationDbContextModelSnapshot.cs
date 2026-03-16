@@ -22,6 +22,1315 @@ namespace Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.Accounting.AccountCatalog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("AcceptsMovements")
+                        .HasColumnType("boolean")
+                        .HasColumnName("accepts_movements");
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("account_code");
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("integer")
+                        .HasColumnName("account_type");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer")
+                        .HasColumnName("level");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Nature")
+                        .HasColumnType("integer")
+                        .HasColumnName("nature");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_account_catalogs");
+
+                    b.HasIndex("AccountCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_account_catalogs_account_code");
+
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("ix_account_catalogs_parent_id");
+
+                    b.ToTable("account_catalogs", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0001-4000-b000-000000000001"),
+                            AcceptsMovements = false,
+                            AccountCode = "1",
+                            AccountType = 1,
+                            Level = 1,
+                            Name = "Activos",
+                            Nature = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0001-4000-b000-000000000002"),
+                            AcceptsMovements = false,
+                            AccountCode = "2",
+                            AccountType = 2,
+                            Level = 1,
+                            Name = "Pasivos",
+                            Nature = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0001-4000-b000-000000000003"),
+                            AcceptsMovements = false,
+                            AccountCode = "3",
+                            AccountType = 3,
+                            Level = 1,
+                            Name = "Capital",
+                            Nature = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0001-4000-b000-000000000004"),
+                            AcceptsMovements = false,
+                            AccountCode = "4",
+                            AccountType = 4,
+                            Level = 1,
+                            Name = "Ingresos",
+                            Nature = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0001-4000-b000-000000000005"),
+                            AcceptsMovements = false,
+                            AccountCode = "5",
+                            AccountType = 5,
+                            Level = 1,
+                            Name = "Gastos",
+                            Nature = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0001-4000-b000-000000000006"),
+                            AcceptsMovements = false,
+                            AccountCode = "6",
+                            AccountType = 6,
+                            Level = 1,
+                            Name = "Costos",
+                            Nature = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000001"),
+                            AcceptsMovements = false,
+                            AccountCode = "1.1",
+                            AccountType = 1,
+                            Level = 2,
+                            Name = "Activo Corriente",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000002"),
+                            AcceptsMovements = false,
+                            AccountCode = "1.2",
+                            AccountType = 1,
+                            Level = 2,
+                            Name = "Activo No Corriente",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000003"),
+                            AcceptsMovements = false,
+                            AccountCode = "2.1",
+                            AccountType = 2,
+                            Level = 2,
+                            Name = "Pasivo Corriente",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000004"),
+                            AcceptsMovements = false,
+                            AccountCode = "2.2",
+                            AccountType = 2,
+                            Level = 2,
+                            Name = "Pasivo No Corriente",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000005"),
+                            AcceptsMovements = false,
+                            AccountCode = "3.1",
+                            AccountType = 3,
+                            Level = 2,
+                            Name = "Capital Social",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000006"),
+                            AcceptsMovements = false,
+                            AccountCode = "3.2",
+                            AccountType = 3,
+                            Level = 2,
+                            Name = "Resultados Acumulados",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000007"),
+                            AcceptsMovements = false,
+                            AccountCode = "4.1",
+                            AccountType = 4,
+                            Level = 2,
+                            Name = "Ingresos Operativos",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000004")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000008"),
+                            AcceptsMovements = false,
+                            AccountCode = "4.2",
+                            AccountType = 4,
+                            Level = 2,
+                            Name = "Ingresos No Operativos",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000004")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000009"),
+                            AcceptsMovements = false,
+                            AccountCode = "5.1",
+                            AccountType = 5,
+                            Level = 2,
+                            Name = "Gastos de Operación",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000005")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000010"),
+                            AcceptsMovements = false,
+                            AccountCode = "5.2",
+                            AccountType = 5,
+                            Level = 2,
+                            Name = "Gastos de Administración",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000005")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000011"),
+                            AcceptsMovements = false,
+                            AccountCode = "5.3",
+                            AccountType = 5,
+                            Level = 2,
+                            Name = "Gastos Financieros",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000005")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0002-4000-b000-000000000012"),
+                            AcceptsMovements = false,
+                            AccountCode = "6.1",
+                            AccountType = 6,
+                            Level = 2,
+                            Name = "Costo de Ventas",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0001-4000-b000-000000000006")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000001"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.1.01",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Caja General",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000002"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.1.02",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Bancos Nacional",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000003"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.1.03",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Cuentas por Cobrar",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000004"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.1.04",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "IVA por Cobrar (Crédito Fiscal)",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000005"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.1.05",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Inventarios",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000006"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.1.06",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Anticipos a Proveedores",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000001")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000007"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.2.01",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Mobiliario y Equipo",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000008"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.2.02",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Equipo de Cómputo",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000009"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.2.03",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Vehículos",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000010"),
+                            AcceptsMovements = true,
+                            AccountCode = "1.2.04",
+                            AccountType = 1,
+                            Level = 3,
+                            Name = "Depreciación Acumulada",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000002")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000011"),
+                            AcceptsMovements = true,
+                            AccountCode = "2.1.01",
+                            AccountType = 2,
+                            Level = 3,
+                            Name = "Cuentas por Pagar",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000012"),
+                            AcceptsMovements = true,
+                            AccountCode = "2.1.02",
+                            AccountType = 2,
+                            Level = 3,
+                            Name = "IVA por Pagar (Débito Fiscal)",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000013"),
+                            AcceptsMovements = true,
+                            AccountCode = "2.1.03",
+                            AccountType = 2,
+                            Level = 3,
+                            Name = "ISR por Pagar",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000014"),
+                            AcceptsMovements = true,
+                            AccountCode = "2.1.04",
+                            AccountType = 2,
+                            Level = 3,
+                            Name = "Sueldos por Pagar",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000015"),
+                            AcceptsMovements = true,
+                            AccountCode = "2.1.05",
+                            AccountType = 2,
+                            Level = 3,
+                            Name = "Retenciones de ISR",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000003")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000016"),
+                            AcceptsMovements = true,
+                            AccountCode = "2.2.01",
+                            AccountType = 2,
+                            Level = 3,
+                            Name = "Préstamos Bancarios",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000004")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000017"),
+                            AcceptsMovements = true,
+                            AccountCode = "3.1.01",
+                            AccountType = 3,
+                            Level = 3,
+                            Name = "Capital Autorizado",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000005")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000018"),
+                            AcceptsMovements = true,
+                            AccountCode = "3.1.02",
+                            AccountType = 3,
+                            Level = 3,
+                            Name = "Reserva Legal",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000005")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000019"),
+                            AcceptsMovements = true,
+                            AccountCode = "3.2.01",
+                            AccountType = 3,
+                            Level = 3,
+                            Name = "Utilidad del Ejercicio",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000006")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000020"),
+                            AcceptsMovements = true,
+                            AccountCode = "3.2.02",
+                            AccountType = 3,
+                            Level = 3,
+                            Name = "Utilidades Retenidas",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000006")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000021"),
+                            AcceptsMovements = true,
+                            AccountCode = "4.1.01",
+                            AccountType = 4,
+                            Level = 3,
+                            Name = "Ventas de Bienes",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000007")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000022"),
+                            AcceptsMovements = true,
+                            AccountCode = "4.1.02",
+                            AccountType = 4,
+                            Level = 3,
+                            Name = "Ventas de Servicios",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000007")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000023"),
+                            AcceptsMovements = true,
+                            AccountCode = "4.2.01",
+                            AccountType = 4,
+                            Level = 3,
+                            Name = "Otros Ingresos",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000008")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000024"),
+                            AcceptsMovements = true,
+                            AccountCode = "4.2.02",
+                            AccountType = 4,
+                            Level = 3,
+                            Name = "Ingresos Financieros",
+                            Nature = 2,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000008")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000025"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.1.01",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Sueldos y Salarios",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000009")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000026"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.1.02",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Alquiler de Local",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000009")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000027"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.1.03",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Servicios Básicos",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000009")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000028"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.1.04",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Depreciaciones",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000009")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000029"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.2.01",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Sueldos Administrativos",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000010")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000030"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.2.02",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Alquiler Oficina",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000010")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000031"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.2.03",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Servicios Administrativos",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000010")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000032"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.3.01",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Intereses Bancarios",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000011")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000033"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.3.02",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Comisiones Bancarias",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000011")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000034"),
+                            AcceptsMovements = true,
+                            AccountCode = "5.3.03",
+                            AccountType = 5,
+                            Level = 3,
+                            Name = "Diferencial Cambiario",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000011")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000035"),
+                            AcceptsMovements = true,
+                            AccountCode = "6.1.01",
+                            AccountType = 6,
+                            Level = 3,
+                            Name = "Compras de Mercancías",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000012")
+                        },
+                        new
+                        {
+                            Id = new Guid("a0a1b2c3-0003-4000-b000-000000000036"),
+                            AcceptsMovements = true,
+                            AccountCode = "6.1.02",
+                            AccountType = 6,
+                            Level = 3,
+                            Name = "Costo de Materia Prima",
+                            Nature = 1,
+                            ParentId = new Guid("a0a1b2c3-0002-4000-b000-000000000012")
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.AccountingPeriod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_accounting_periods");
+
+                    b.ToTable("accounting_periods", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c0a1b2c3-0004-4000-a000-000000000001"),
+                            EndDate = new DateTime(2026, 12, 31, 23, 59, 59, 0, DateTimeKind.Utc),
+                            Name = "Año 2026",
+                            StartDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Status = 1
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Client", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("LegalName")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("legal_name");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Nit")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nit");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
+
+                    b.HasKey("Id")
+                        .HasName("pk_clients");
+
+                    b.HasIndex("Nit")
+                        .IsUnique()
+                        .HasDatabaseName("ix_clients_nit")
+                        .HasFilter("nit IS NOT NULL");
+
+                    b.ToTable("clients", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Currency", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("code");
+
+                    b.Property<int>("DecimalPlaces")
+                        .HasColumnType("integer")
+                        .HasColumnName("decimal_places");
+
+                    b.Property<bool>("IsFunctional")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_functional");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("symbol");
+
+                    b.HasKey("Id")
+                        .HasName("pk_currencies");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_currencies_code");
+
+                    b.ToTable("currencies", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c0a1b2c3-0001-4000-a000-000000000001"),
+                            Code = "GTQ",
+                            DecimalPlaces = 2,
+                            IsFunctional = true,
+                            Name = "Quetzal Guatemalteco",
+                            Symbol = "Q"
+                        },
+                        new
+                        {
+                            Id = new Guid("c0a1b2c3-0001-4000-a000-000000000002"),
+                            Code = "USD",
+                            DecimalPlaces = 2,
+                            IsFunctional = false,
+                            Name = "Dólar Estadounidense",
+                            Symbol = "$"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.ExchangeRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("BuyRate")
+                        .HasPrecision(20, 6)
+                        .HasColumnType("numeric(20,6)")
+                        .HasColumnName("buy_rate");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("currency_id");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date");
+
+                    b.Property<decimal>("SellRate")
+                        .HasPrecision(20, 6)
+                        .HasColumnType("numeric(20,6)")
+                        .HasColumnName("sell_rate");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("source");
+
+                    b.HasKey("Id")
+                        .HasName("pk_exchange_rates");
+
+                    b.HasIndex("CurrencyId", "Date")
+                        .IsUnique()
+                        .HasDatabaseName("ix_exchange_rates_currency_id_date");
+
+                    b.ToTable("exchange_rates", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c0a1b2c3-0002-4000-a000-000000000001"),
+                            BuyRate = 7.66m,
+                            CurrencyId = new Guid("c0a1b2c3-0001-4000-a000-000000000002"),
+                            Date = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SellRate = 7.66m,
+                            Source = "Manual"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<Guid?>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("currency_id");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date");
+
+                    b.Property<DateTime?>("DueDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_date");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(20, 6)
+                        .HasColumnType("numeric(20,6)")
+                        .HasColumnName("exchange_rate");
+
+                    b.Property<string>("FiscalAutorizacion")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("fiscal_autorizacion");
+
+                    b.Property<string>("FiscalNumero")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("fiscal_numero");
+
+                    b.Property<string>("FiscalSerie")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("fiscal_serie");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("invoice_number");
+
+                    b.Property<int>("InvoiceType")
+                        .HasColumnType("integer")
+                        .HasColumnName("invoice_type");
+
+                    b.Property<Guid?>("JournalEntryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("journal_entry_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Nit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("notes");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("subtotal");
+
+                    b.Property<Guid?>("SupplierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("supplier_id");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("tax_amount");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("total");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoices");
+
+                    b.HasIndex("ClientId")
+                        .HasDatabaseName("ix_invoices_client_id");
+
+                    b.HasIndex("CurrencyId")
+                        .HasDatabaseName("ix_invoices_currency_id");
+
+                    b.HasIndex("InvoiceNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_invoices_invoice_number");
+
+                    b.HasIndex("JournalEntryId")
+                        .HasDatabaseName("ix_invoices_journal_entry_id");
+
+                    b.HasIndex("SupplierId")
+                        .HasDatabaseName("ix_invoices_supplier_id");
+
+                    b.ToTable("invoices", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.InvoiceItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<int>("LineOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("line_order");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(20, 5)
+                        .HasColumnType("numeric(20,5)")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("subtotal");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("tax_amount");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("total");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(20, 7)
+                        .HasColumnType("numeric(20,7)")
+                        .HasColumnName("unit_price");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoice_items");
+
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("ix_invoice_items_invoice_id");
+
+                    b.ToTable("invoice_items", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.JournalEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("currency_id");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("EntryNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("entry_number");
+
+                    b.Property<int>("EntryType")
+                        .HasColumnType("integer")
+                        .HasColumnName("entry_type");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(20, 6)
+                        .HasColumnType("numeric(20,6)")
+                        .HasColumnName("exchange_rate");
+
+                    b.Property<Guid>("PeriodId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("period_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_journal_entries");
+
+                    b.HasIndex("CurrencyId")
+                        .HasDatabaseName("ix_journal_entries_currency_id");
+
+                    b.HasIndex("EntryNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_journal_entries_entry_number");
+
+                    b.HasIndex("PeriodId")
+                        .HasDatabaseName("ix_journal_entries_period_id");
+
+                    b.ToTable("journal_entries", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.JournalEntryLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("account_id");
+
+                    b.Property<decimal>("Credit")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("credit");
+
+                    b.Property<decimal>("CreditFunctional")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("credit_functional");
+
+                    b.Property<decimal>("Debit")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("debit");
+
+                    b.Property<decimal>("DebitFunctional")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("debit_functional");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<Guid>("JournalEntryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("journal_entry_id");
+
+                    b.Property<int>("LineOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("line_order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_journal_entry_lines");
+
+                    b.HasIndex("AccountId")
+                        .HasDatabaseName("ix_journal_entry_lines_account_id");
+
+                    b.HasIndex("JournalEntryId")
+                        .HasDatabaseName("ix_journal_entry_lines_journal_entry_id");
+
+                    b.ToTable("journal_entry_lines", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Supplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Nit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("nit");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
+
+                    b.HasKey("Id")
+                        .HasName("pk_suppliers");
+
+                    b.HasIndex("Nit")
+                        .IsUnique()
+                        .HasDatabaseName("ix_suppliers_nit");
+
+                    b.ToTable("suppliers", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.TaxConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CreditAccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("credit_account_id");
+
+                    b.Property<Guid>("DebitAccountId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("debit_account_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("Percentage")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
+                        .HasColumnName("percentage");
+
+                    b.Property<int>("TaxType")
+                        .HasColumnType("integer")
+                        .HasColumnName("tax_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tax_configurations");
+
+                    b.HasIndex("CreditAccountId")
+                        .HasDatabaseName("ix_tax_configurations_credit_account_id");
+
+                    b.HasIndex("DebitAccountId")
+                        .HasDatabaseName("ix_tax_configurations_debit_account_id");
+
+                    b.ToTable("tax_configurations", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c0a1b2c3-0003-4000-c000-000000000001"),
+                            CreditAccountId = new Guid("a0a1b2c3-0003-4000-b000-000000000012"),
+                            DebitAccountId = new Guid("a0a1b2c3-0003-4000-b000-000000000004"),
+                            Name = "IVA 12%",
+                            Percentage = 12.00m,
+                            TaxType = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("c0a1b2c3-0003-4000-c000-000000000002"),
+                            CreditAccountId = new Guid("a0a1b2c3-0003-4000-b000-000000000015"),
+                            DebitAccountId = new Guid("a0a1b2c3-0003-4000-b000-000000000013"),
+                            Name = "ISR Retención 5%",
+                            Percentage = 5.00m,
+                            TaxType = 3
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.TaxTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("currency_id");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(20, 6)
+                        .HasColumnType("numeric(20,6)")
+                        .HasColumnName("exchange_rate");
+
+                    b.Property<Guid?>("FiscalDocumentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("fiscal_document_id");
+
+                    b.Property<Guid?>("JournalEntryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("journal_entry_id");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("tax_amount");
+
+                    b.Property<decimal>("TaxAmountFunctional")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("tax_amount_functional");
+
+                    b.Property<Guid>("TaxConfigurationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tax_configuration_id");
+
+                    b.Property<decimal>("TaxableBase")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("taxable_base");
+
+                    b.Property<decimal>("TaxableBaseFunctional")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("numeric(20,2)")
+                        .HasColumnName("taxable_base_functional");
+
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("integer")
+                        .HasColumnName("transaction_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tax_transactions");
+
+                    b.HasIndex("CurrencyId")
+                        .HasDatabaseName("ix_tax_transactions_currency_id");
+
+                    b.HasIndex("FiscalDocumentId")
+                        .HasDatabaseName("ix_tax_transactions_fiscal_document_id");
+
+                    b.HasIndex("JournalEntryId")
+                        .HasDatabaseName("ix_tax_transactions_journal_entry_id");
+
+                    b.HasIndex("TaxConfigurationId")
+                        .HasDatabaseName("ix_tax_transactions_tax_configuration_id");
+
+                    b.ToTable("tax_transactions", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.FiscalData.FiscalDataEntry", b =>
                 {
                     b.Property<Guid>("Id")
@@ -483,6 +1792,41 @@ namespace Persistence.Migrations
                         },
                         new
                         {
+                            Id = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b01"),
+                            Code = "Accounting.Create",
+                            Description = "Permite crear registros contables",
+                            Name = "Crear Contabilidad"
+                        },
+                        new
+                        {
+                            Id = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b02"),
+                            Code = "Accounting.Read",
+                            Description = "Permite ver información contable",
+                            Name = "Ver Contabilidad"
+                        },
+                        new
+                        {
+                            Id = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b03"),
+                            Code = "Accounting.Update",
+                            Description = "Permite actualizar registros contables",
+                            Name = "Actualizar Contabilidad"
+                        },
+                        new
+                        {
+                            Id = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b04"),
+                            Code = "Accounting.Delete",
+                            Description = "Permite eliminar registros contables",
+                            Name = "Eliminar Contabilidad"
+                        },
+                        new
+                        {
+                            Id = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b05"),
+                            Code = "Accounting.Close",
+                            Description = "Permite cerrar períodos contables",
+                            Name = "Cerrar Período"
+                        },
+                        new
+                        {
                             Id = new Guid("f585a827-07a3-435f-89a0-b6734842ffea"),
                             Code = "Admin.FullAccess",
                             Description = "Acceso completo a todas las funcionalidades del sistema",
@@ -922,6 +2266,919 @@ namespace Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.Entities.Accounting.AccountCatalog", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.AccountCatalog", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_account_catalogs_account_catalogs_parent_id");
+
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("AccountCatalogId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("AccountCatalogId");
+
+                            b1.ToTable("account_catalogs");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AccountCatalogId")
+                                .HasConstraintName("fk_account_catalogs_account_catalogs_id");
+
+                            b1.HasData(
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0001-4000-b000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0001-4000-b000-000000000002"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0001-4000-b000-000000000003"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0001-4000-b000-000000000004"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0001-4000-b000-000000000005"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0001-4000-b000-000000000006"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000002"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000003"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000004"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000005"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000006"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000007"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000008"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000009"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000010"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000011"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0002-4000-b000-000000000012"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000002"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000003"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000004"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000005"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000006"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000007"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000008"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000009"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000010"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000011"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000012"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000013"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000014"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000015"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000016"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000017"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000018"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000019"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000020"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000021"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000022"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000023"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000024"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000025"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000026"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000027"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000028"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000029"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000030"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000031"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000032"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000033"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000034"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000035"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    AccountCatalogId = new Guid("a0a1b2c3-0003-4000-b000-000000000036"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                });
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.AccountingPeriod", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("AccountingPeriodId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("AccountingPeriodId");
+
+                            b1.ToTable("accounting_periods");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AccountingPeriodId")
+                                .HasConstraintName("fk_accounting_periods_accounting_periods_id");
+
+                            b1.HasData(
+                                new
+                                {
+                                    AccountingPeriodId = new Guid("c0a1b2c3-0004-4000-a000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                });
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Client", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("ClientId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("ClientId");
+
+                            b1.ToTable("clients");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClientId")
+                                .HasConstraintName("fk_clients_clients_id");
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Currency", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("CurrencyId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("CurrencyId");
+
+                            b1.ToTable("currencies");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CurrencyId")
+                                .HasConstraintName("fk_currencies_currencies_id");
+
+                            b1.HasData(
+                                new
+                                {
+                                    CurrencyId = new Guid("c0a1b2c3-0001-4000-a000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    CurrencyId = new Guid("c0a1b2c3-0001-4000-a000-000000000002"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                });
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.ExchangeRate", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_exchange_rates_currencies_currency_id");
+
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("ExchangeRateId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("ExchangeRateId");
+
+                            b1.ToTable("exchange_rates");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ExchangeRateId")
+                                .HasConstraintName("fk_exchange_rates_exchange_rates_id");
+
+                            b1.HasData(
+                                new
+                                {
+                                    ExchangeRateId = new Guid("c0a1b2c3-0002-4000-a000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                });
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Invoice", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_invoices_clients_client_id");
+
+                    b.HasOne("Domain.Entities.Accounting.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_invoices_currencies_currency_id");
+
+                    b.HasOne("Domain.Entities.Accounting.JournalEntry", "JournalEntry")
+                        .WithMany()
+                        .HasForeignKey("JournalEntryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_invoices_journal_entries_journal_entry_id");
+
+                    b.HasOne("Domain.Entities.Accounting.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_invoices_suppliers_supplier_id");
+
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("InvoiceId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("InvoiceId");
+
+                            b1.ToTable("invoices");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId")
+                                .HasConstraintName("fk_invoices_invoices_id");
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("JournalEntry");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.InvoiceItem", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.Invoice", "Invoice")
+                        .WithMany("Items")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_invoice_items_invoices_invoice_id");
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.JournalEntry", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_journal_entries_currencies_currency_id");
+
+                    b.HasOne("Domain.Entities.Accounting.AccountingPeriod", "Period")
+                        .WithMany()
+                        .HasForeignKey("PeriodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_journal_entries_accounting_periods_period_id");
+
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("JournalEntryId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("JournalEntryId");
+
+                            b1.ToTable("journal_entries");
+
+                            b1.WithOwner()
+                                .HasForeignKey("JournalEntryId")
+                                .HasConstraintName("fk_journal_entries_journal_entries_id");
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("Period");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.JournalEntryLine", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.AccountCatalog", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_journal_entry_lines_account_catalogs_account_id");
+
+                    b.HasOne("Domain.Entities.Accounting.JournalEntry", "JournalEntry")
+                        .WithMany("Lines")
+                        .HasForeignKey("JournalEntryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_journal_entry_lines_journal_entries_journal_entry_id");
+
+                    b.Navigation("Account");
+
+                    b.Navigation("JournalEntry");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Supplier", b =>
+                {
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("SupplierId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("SupplierId");
+
+                            b1.ToTable("suppliers");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SupplierId")
+                                .HasConstraintName("fk_suppliers_suppliers_id");
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.TaxConfiguration", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.AccountCatalog", "CreditAccount")
+                        .WithMany()
+                        .HasForeignKey("CreditAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_tax_configurations_account_catalogs_credit_account_id");
+
+                    b.HasOne("Domain.Entities.Accounting.AccountCatalog", "DebitAccount")
+                        .WithMany()
+                        .HasForeignKey("DebitAccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_tax_configurations_account_catalogs_debit_account_id");
+
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("TaxConfigurationId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("TaxConfigurationId");
+
+                            b1.ToTable("tax_configurations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaxConfigurationId")
+                                .HasConstraintName("fk_tax_configurations_tax_configurations_id");
+
+                            b1.HasData(
+                                new
+                                {
+                                    TaxConfigurationId = new Guid("c0a1b2c3-0003-4000-c000-000000000001"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    TaxConfigurationId = new Guid("c0a1b2c3-0003-4000-c000-000000000002"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                });
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+
+                    b.Navigation("CreditAccount");
+
+                    b.Navigation("DebitAccount");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.TaxTransaction", b =>
+                {
+                    b.HasOne("Domain.Entities.Accounting.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_tax_transactions_currencies_currency_id");
+
+                    b.HasOne("Domain.Entities.FiscalDocuments.FiscalDocument", "FiscalDocument")
+                        .WithMany()
+                        .HasForeignKey("FiscalDocumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_tax_transactions_fiscal_documents_fiscal_document_id");
+
+                    b.HasOne("Domain.Entities.Accounting.JournalEntry", "JournalEntry")
+                        .WithMany()
+                        .HasForeignKey("JournalEntryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_tax_transactions_journal_entries_journal_entry_id");
+
+                    b.HasOne("Domain.Entities.Accounting.TaxConfiguration", "TaxConfiguration")
+                        .WithMany()
+                        .HasForeignKey("TaxConfigurationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_tax_transactions_tax_configurations_tax_configuration_id");
+
+                    b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
+                        {
+                            b1.Property<Guid>("TaxTransactionId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_created_at");
+
+                            b1.Property<DateTime?>("DeletedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_deleted_at");
+
+                            b1.Property<bool>("IsActive")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true)
+                                .HasColumnName("audit_field_is_active");
+
+                            b1.Property<DateTime?>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("audit_field_updated_at");
+
+                            b1.HasKey("TaxTransactionId");
+
+                            b1.ToTable("tax_transactions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaxTransactionId")
+                                .HasConstraintName("fk_tax_transactions_tax_transactions_id");
+                        });
+
+                    b.Navigation("AuditField")
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("FiscalDocument");
+
+                    b.Navigation("JournalEntry");
+
+                    b.Navigation("TaxConfiguration");
+                });
+
             modelBuilder.Entity("Domain.Entities.FiscalData.FiscalDataEntry", b =>
                 {
                     b.OwnsOne("Domain.ValueObjects.AuditField", "AuditField", b1 =>
@@ -1191,6 +3448,36 @@ namespace Persistence.Migrations
                                 new
                                 {
                                     PermissionId = new Guid("44d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    PermissionId = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b01"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    PermissionId = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b02"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    PermissionId = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b03"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    PermissionId = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b04"),
+                                    CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    IsActive = true
+                                },
+                                new
+                                {
+                                    PermissionId = new Guid("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b05"),
                                     CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                                     IsActive = true
                                 },
@@ -1492,6 +3779,21 @@ namespace Persistence.Migrations
                     b.Navigation("JobPosition");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.AccountCatalog", b =>
+                {
+                    b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.Invoice", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Accounting.JournalEntry", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("Domain.Entities.FiscalDocuments.FiscalDocument", b =>

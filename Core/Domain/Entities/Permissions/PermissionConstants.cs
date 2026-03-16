@@ -41,6 +41,13 @@ public static class PermissionConstants
         public static readonly Guid ProductUpdate = new("33c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e");
         public static readonly Guid ProductDelete = new("44d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f");
 
+        // Permisos de Contabilidad
+        public static readonly Guid AccountingCreate = new("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b01");
+        public static readonly Guid AccountingRead = new("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b02");
+        public static readonly Guid AccountingUpdate = new("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b03");
+        public static readonly Guid AccountingDelete = new("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b04");
+        public static readonly Guid AccountingClose = new("55a1b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b05");
+
         // Permisos de Administración
         public static readonly Guid AdminFullAccess = new("f585a827-07a3-435f-89a0-b6734842ffea");
     }
@@ -77,6 +84,13 @@ public static class PermissionConstants
         public const string ProductRead = "Product.Read";
         public const string ProductUpdate = "Product.Update";
         public const string ProductDelete = "Product.Delete";
+
+        // Permisos de Contabilidad
+        public const string AccountingCreate = "Accounting.Create";
+        public const string AccountingRead = "Accounting.Read";
+        public const string AccountingUpdate = "Accounting.Update";
+        public const string AccountingDelete = "Accounting.Delete";
+        public const string AccountingClose = "Accounting.Close";
 
         // Permisos de Administración
         public const string AdminFullAccess = "Admin.FullAccess";
@@ -119,6 +133,13 @@ public static class PermissionConstants
         CreatePermission(Ids.ProductRead, "Ver Producto", "Permite ver información de productos", Codes.ProductRead),
         CreatePermission(Ids.ProductUpdate, "Actualizar Producto", "Permite actualizar productos", Codes.ProductUpdate),
         CreatePermission(Ids.ProductDelete, "Eliminar Producto", "Permite eliminar productos", Codes.ProductDelete),
+
+        // Permisos de Contabilidad
+        CreatePermission(Ids.AccountingCreate, "Crear Contabilidad", "Permite crear registros contables", Codes.AccountingCreate),
+        CreatePermission(Ids.AccountingRead, "Ver Contabilidad", "Permite ver información contable", Codes.AccountingRead),
+        CreatePermission(Ids.AccountingUpdate, "Actualizar Contabilidad", "Permite actualizar registros contables", Codes.AccountingUpdate),
+        CreatePermission(Ids.AccountingDelete, "Eliminar Contabilidad", "Permite eliminar registros contables", Codes.AccountingDelete),
+        CreatePermission(Ids.AccountingClose, "Cerrar Período", "Permite cerrar períodos contables", Codes.AccountingClose),
 
         // Permisos de Administración
         CreatePermission(Ids.AdminFullAccess, "Acceso Total", "Acceso completo a todas las funcionalidades del sistema", Codes.AdminFullAccess),
