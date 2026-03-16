@@ -16,4 +16,5 @@ public class FiscalDocumentConfiguration
     public string DireccionEmisor { get; set; } = default!;
     public string NitCertificador { get; set; } = default!;
     public string NombreCertificador { get; set; } = default!;
+    public bool SujetoIsrTrimestral { get; set; }
 }

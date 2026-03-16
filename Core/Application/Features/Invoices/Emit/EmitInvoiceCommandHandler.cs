@@ -94,7 +94,7 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
             Moneda: currencyType,
             ExchangeRate: invoice.ExchangeRate,
             TaxPercentage: taxPercentage,
-            Referencia: invoice.InvoiceNumber,
+            Referencia: $"{invoice.InvoiceNumber}-{invoice.Id.Value.ToString("N")[..8]}",
             SerieAdmin: null,
             NumeroAdmin: null,
             DocAsociadoSerie: null,

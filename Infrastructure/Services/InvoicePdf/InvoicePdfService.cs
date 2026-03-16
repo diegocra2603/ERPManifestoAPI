@@ -17,6 +17,9 @@ public sealed class InvoicePdfService : IInvoicePdfService
     private static readonly string FooterLogoUrl =
         "https://res.cloudinary.com/dlg9nca2v/image/upload/v1773634597/logo-footer-negro_my78wz.png";
 
+    private static readonly TimeZoneInfo GuatemalaTimezone =
+        TimeZoneInfo.FindSystemTimeZoneById("America/Guatemala");
+
     private readonly FiscalDocumentConfiguration _config;
     private readonly HttpClient _httpClient;
 
@@ -51,7 +54,7 @@ public sealed class InvoicePdfService : IInvoicePdfService
                 page.DefaultTextStyle(x => x.FontSize(9).FontColor("#1A1A1A"));
 
                 page.Header().Element(c => ComposeHeader(c, invoice, headerLogo));
-                page.Content().Element(c => ComposeContent(c, invoice));
+                page.Content().Element(c => ComposeContent(c, invoice, invoice.Currency?.Code ?? "GTQ"));
                 page.Footer().Element(c => ComposeFooter(c, footerLogo));
             });
         });
@@ -155,7 +158,9 @@ public sealed class InvoicePdfService : IInvoicePdfService
                 row.RelativeItem().Column(left =>
                 {
                     DetailLabel(left, "Fecha de Emisi\u00f3n");
-                    left.Item().Text(invoice.Date.ToString("dd/MM/yyyy HH:mm"))
+                    var dateUtc = DateTime.SpecifyKind(invoice.Date, DateTimeKind.Utc);
+                    var fechaLocal = TimeZoneInfo.ConvertTimeFromUtc(dateUtc, GuatemalaTimezone);
+                    left.Item().Text(fechaLocal.ToString("dd/MM/yyyy HH:mm"))
                         .FontSize(9).FontColor("#1A1A1A");
                     left.Item().PaddingTop(6);
 
@@ -238,7 +243,7 @@ public sealed class InvoicePdfService : IInvoicePdfService
         });
     }
 
-    private void ComposeContent(IContainer container, Invoice invoice)
+    private void ComposeContent(IContainer container, Invoice invoice, string currencyCode)
     {
         container.Column(col =>
         {
@@ -255,11 +260,11 @@ public sealed class InvoicePdfService : IInvoicePdfService
                     row.RelativeItem().Column(c =>
                     {
                         c.Item().Text(item.Description).FontSize(9).FontColor("#1A1A1A");
-                        c.Item().Text($"{item.Quantity:N2} x {FormatCurrency(item.UnitPrice)}")
+                        c.Item().Text($"{item.Quantity:N2} x {FormatCurrency(item.UnitPrice, currencyCode)}")
                             .FontSize(7).FontColor("#AAAAAA");
                     });
                     row.ConstantItem(100).AlignRight().AlignMiddle()
-                        .Text(FormatCurrency(item.Total)).FontSize(9).FontColor("#1A1A1A");
+                        .Text(FormatCurrency(item.Total, currencyCode)).FontSize(9).FontColor("#1A1A1A");
                 });
 
                 col.Item().LineHorizontal(0.5f).LineColor("#E0E0E0");
@@ -270,8 +275,8 @@ public sealed class InvoicePdfService : IInvoicePdfService
             // Totals - right aligned, simple
             col.Item().AlignRight().Width(220).Column(totals =>
             {
-                TotalLine(totals, "Subtotal", FormatCurrency(invoice.Subtotal));
-                TotalLine(totals, "IVA (12%)", FormatCurrency(invoice.TaxAmount));
+                TotalLine(totals, "Subtotal", FormatCurrency(invoice.Subtotal, currencyCode));
+                TotalLine(totals, "IVA (12%)", FormatCurrency(invoice.TaxAmount, currencyCode));
 
                 totals.Item().PaddingTop(6).PaddingBottom(6)
                     .LineHorizontal(0.5f).LineColor("#1A1A1A");
@@ -281,21 +286,9 @@ public sealed class InvoicePdfService : IInvoicePdfService
                     row.RelativeItem().Text("Total")
                         .FontSize(12).Bold().FontColor("#1A1A1A");
                     row.ConstantItem(110).AlignRight()
-                        .Text(FormatCurrency(invoice.Total))
+                        .Text(FormatCurrency(invoice.Total, currencyCode))
                         .FontSize(12).Bold().FontColor("#1A1A1A");
                 });
-
-                if (invoice.DueDate.HasValue)
-                {
-                    totals.Item().PaddingTop(10).Row(row =>
-                    {
-                        row.RelativeItem().Text("Fecha de Vencimiento")
-                            .FontSize(8).FontColor("#AAAAAA");
-                        row.ConstantItem(110).AlignRight()
-                            .Text(invoice.DueDate.Value.ToString("dd/MM/yyyy"))
-                            .FontSize(8).FontColor("#1A1A1A");
-                    });
-                }
             });
 
             // Notes
@@ -309,6 +302,14 @@ public sealed class InvoicePdfService : IInvoicePdfService
                 col.Item().PaddingTop(4);
                 col.Item().Text(invoice.Notes)
                     .FontSize(8).FontColor("#666666").LineHeight(1.4f);
+            }
+
+            // Sujeto a pagos trimestrales ISR
+            if (_config.SujetoIsrTrimestral)
+            {
+                col.Item().PaddingTop(16);
+                col.Item().Text("Sujeto a pagos trimestrales ISR")
+                    .FontSize(8).Bold().FontColor("#1A1A1A").AlignCenter();
             }
 
             // Certificador data at the bottom
@@ -386,5 +387,6 @@ public sealed class InvoicePdfService : IInvoicePdfService
         });
     }
 
-    private static string FormatCurrency(decimal amount) => $"Q {amount:N2}";
+    private static string FormatCurrency(decimal amount, string currencyCode = "GTQ") =>
+        currencyCode == "USD" ? $"$ {amount:N2}" : $"Q {amount:N2}";
 }
