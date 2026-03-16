@@ -12,4 +12,6 @@ public class FiscalDocumentConfiguration
     public string Password { get; set; } = default!;
     public int Establecimiento { get; set; } = 1;
     public string IdMaquina { get; set; } = "1";
+    public string NombreComercial { get; set; } = default!;
+    public string DireccionEmisor { get; set; } = default!;
 }

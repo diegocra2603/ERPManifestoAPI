@@ -460,6 +460,8 @@ public class InnovaFiscalDocumentService : IFiscalDocumentService
         sb.Append($"<Moneda>{(int)document.Moneda}</Moneda>");
         sb.Append($"<Tasa>{F2(document.Tasa)}</Tasa>");
         sb.Append($"<Referencia>{EscapeXml(document.Referencia)}</Referencia>");
+        if (document.NumeroAcceso.HasValue && document.NumeroAcceso > 0)
+            sb.Append($"<NumeroAcceso>{document.NumeroAcceso}</NumeroAcceso>");
         sb.Append($"<SerieAdmin>{EscapeXml(document.SerieAdmin ?? "A")}</SerieAdmin>");
         sb.Append($"<NumeroAdmin>{document.NumeroAdmin}</NumeroAdmin>");
         sb.Append("<Reversion>N</Reversion>");

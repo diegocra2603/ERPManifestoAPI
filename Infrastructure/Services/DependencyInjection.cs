@@ -7,6 +7,7 @@ using Domain.Contracts.Infrastructure.Services.FiscalDataValidator;
 using Domain.Contracts.Infrastructure.Services.FiscalDocument;
 using Domain.Contracts.Infrastructure.Services.Files;
 using Domain.Contracts.Infrastructure.Services.ImageCompressor;
+using Domain.Contracts.Infrastructure.Services.InvoicePdf;
 using Services.BCrypt;
 using Services.Token;
 using Services.Email;
@@ -14,6 +15,7 @@ using Services.FiscalDataValidator;
 using Services.FiscalDocument;
 using Services.Files;
 using Services.ImageCompressor;
+using Services.InvoicePdf;
 
 namespace Services;
 
@@ -43,6 +45,7 @@ public static class DependencyInjection
         services.AddHttpClient();
         services.AddScoped<IFiscalDataValidatorService, InnovaFiscalDataValidatorService>();
         services.AddScoped<IFiscalDocumentService, InnovaFiscalDocumentService>();
+        services.AddScoped<IInvoicePdfService, InvoicePdfService>();
 
         return services;
     }
