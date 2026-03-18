@@ -29,7 +29,8 @@ public class GetInvoicePdfQueryHandler : IRequestHandler<GetInvoicePdfQuery, Err
             e => e.Client!,
             e => e.Supplier!,
             e => e.Currency,
-            e => e.Items
+            e => e.Items,
+            e => e.OriginalInvoice!
         };
 
         var invoices = await _invoiceRepository.GetAsync(
@@ -42,7 +43,8 @@ public class GetInvoicePdfQueryHandler : IRequestHandler<GetInvoicePdfQuery, Err
             return Error.NotFound("Invoice.NotFound", "Factura no encontrada.");
 
         var pdfBytes = await _pdfService.GeneratePdfAsync(invoice);
-        var fileName = $"Factura-{invoice.InvoiceNumber}.pdf";
+        var prefix = invoice.InvoiceType == Domain.Entities.Accounting.Enums.InvoiceType.CreditNote ? "NC" : "Factura";
+        var fileName = $"{prefix}-{invoice.InvoiceNumber}.pdf";
 
         return new InvoicePdfResult(pdfBytes, fileName);
     }

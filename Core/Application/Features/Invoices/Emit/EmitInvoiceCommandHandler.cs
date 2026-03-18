@@ -40,7 +40,8 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
             e => e.Items,
             e => e.Client!,
             e => e.Supplier!,
-            e => e.Currency
+            e => e.Currency,
+            e => e.OriginalInvoice!
         };
 
         // Load WITH tracking so we can update after Ainnova call
@@ -64,9 +65,12 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
         var taxPercentage = ivaTax?.Percentage ?? 12.00m;
 
         // Determine fiscal document type
-        var documentType = invoice.InvoiceType == InvoiceType.Receivable
-            ? FiscalDocumentType.Factura
-            : FiscalDocumentType.FacturaEspecial;
+        var documentType = invoice.InvoiceType switch
+        {
+            InvoiceType.Receivable => FiscalDocumentType.Factura,
+            InvoiceType.CreditNote => FiscalDocumentType.NotaDeCredito,
+            _ => FiscalDocumentType.FacturaEspecial
+        };
 
         var currencyType = invoice.Currency?.Code == "USD"
             ? CurrencyType.Dolar
@@ -83,6 +87,15 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
             SaleType: SaleType.Servicios
         )).ToList();
 
+        // For credit notes, include associated document data (original invoice)
+        string? docAsociadoSerie = null;
+        string? docAsociadoPreimpreso = null;
+        if (invoice.InvoiceType == InvoiceType.CreditNote && invoice.OriginalInvoice is not null)
+        {
+            docAsociadoSerie = invoice.OriginalInvoice.FiscalSerie;
+            docAsociadoPreimpreso = invoice.OriginalInvoice.FiscalNumero;
+        }
+
         // Send to Ainnova - pass exchange rate and tax percentage from accounting entities
         var fiscalRequest = new GenerateDocumentRequest(
             DocumentType: documentType,
@@ -97,8 +110,8 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
             Referencia: $"{invoice.InvoiceNumber}-{invoice.Id.Value.ToString("N")[..8]}",
             SerieAdmin: null,
             NumeroAdmin: null,
-            DocAsociadoSerie: null,
-            DocAsociadoPreimpreso: null,
+            DocAsociadoSerie: docAsociadoSerie,
+            DocAsociadoPreimpreso: docAsociadoPreimpreso,
             Items: fiscalItems
         );
 

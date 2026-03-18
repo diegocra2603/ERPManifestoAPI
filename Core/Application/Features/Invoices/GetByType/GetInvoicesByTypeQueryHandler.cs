@@ -25,12 +25,18 @@ public class GetInvoicesByTypeQueryHandler : IRequestHandler<GetInvoicesByTypeQu
             e => e.Client!,
             e => e.Supplier!,
             e => e.Currency,
-            e => e.Items
+            e => e.Items,
+            e => e.OriginalInvoice!
         };
 
-        var invoices = await _invoiceRepository.GetAsync(
-            predicate: e => e.InvoiceType == invoiceType && e.AuditField.IsActive,
-            includes: includes);
+        // When requesting receivable, also include credit notes
+        var invoices = invoiceType == InvoiceType.Receivable
+            ? await _invoiceRepository.GetAsync(
+                predicate: e => (e.InvoiceType == InvoiceType.Receivable || e.InvoiceType == InvoiceType.CreditNote) && e.AuditField.IsActive,
+                includes: includes)
+            : await _invoiceRepository.GetAsync(
+                predicate: e => e.InvoiceType == invoiceType && e.AuditField.IsActive,
+                includes: includes);
 
         return invoices
             .Select(InvoiceMapper.MapToDto)

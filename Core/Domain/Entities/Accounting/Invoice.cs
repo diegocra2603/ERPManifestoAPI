@@ -31,7 +31,8 @@ public sealed class Invoice : AggregateRoot
         string? fiscalSerie,
         string? fiscalNumero,
         string? fiscalAutorizacion,
-        AuditField auditField)
+        AuditField auditField,
+        InvoiceId? originalInvoiceId = null)
     {
         Id = id;
         InvoiceType = invoiceType;
@@ -55,6 +56,7 @@ public sealed class Invoice : AggregateRoot
         FiscalNumero = fiscalNumero;
         FiscalAutorizacion = fiscalAutorizacion;
         AuditField = auditField;
+        OriginalInvoiceId = originalInvoiceId;
     }
 
     public InvoiceId Id { get; private set; } = default!;
@@ -78,6 +80,7 @@ public sealed class Invoice : AggregateRoot
     public string? FiscalSerie { get; private set; }
     public string? FiscalNumero { get; private set; }
     public string? FiscalAutorizacion { get; private set; }
+    public InvoiceId? OriginalInvoiceId { get; private set; }
     public AuditField AuditField { get; private set; } = default!;
 
     // Navigation
@@ -85,6 +88,7 @@ public sealed class Invoice : AggregateRoot
     public Supplier? Supplier { get; private set; }
     public Currency Currency { get; private set; } = default!;
     public JournalEntry? JournalEntry { get; private set; }
+    public Invoice? OriginalInvoice { get; private set; }
     public IReadOnlyCollection<InvoiceItem> Items => _items.AsReadOnly();
 
     public void AddItem(InvoiceItem item) { _items.Add(item); }

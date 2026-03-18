@@ -27,6 +27,10 @@ public record InvoiceDto(
     string? FiscalSerie,
     string? FiscalNumero,
     string? FiscalAutorizacion,
+    Guid? OriginalInvoiceId,
+    string? OriginalInvoiceNumber,
+    string? OriginalFiscalSerie,
+    string? OriginalFiscalNumero,
     IReadOnlyList<InvoiceItemDto> Items
 );
 

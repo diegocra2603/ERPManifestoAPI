@@ -107,6 +107,16 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
             .HasForeignKey(i => i.JournalEntryId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.Property(i => i.OriginalInvoiceId)
+            .HasConversion(
+                id => id == null ? (Guid?)null : id.Value,
+                v => v == null ? null : new InvoiceId(v.Value));
+
+        builder.HasOne(i => i.OriginalInvoice)
+            .WithMany()
+            .HasForeignKey(i => i.OriginalInvoiceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasMany(i => i.Items)
             .WithOne(item => item.Invoice)
             .HasForeignKey(item => item.InvoiceId)

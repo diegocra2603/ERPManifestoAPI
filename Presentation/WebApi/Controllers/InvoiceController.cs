@@ -1,4 +1,5 @@
 using Application.Common.Constants;
+using Application.Features.Invoices.CreateCreditNote;
 using Application.Features.Invoices.CreatePayable;
 using Application.Features.Invoices.CreateReceivable;
 using Application.Features.Invoices.Delete;
@@ -36,6 +37,15 @@ public class InvoiceController : ApiController
     [HasPermission(PermissionCodes.AccountingCreate)]
     public async Task<IActionResult> CreatePayableInvoice([FromBody] CreatePayableInvoiceCommand command)
     {
+        var result = await _mediator.Send(command);
+        return result.Match(invoice => Ok(invoice), errors => Problem(errors));
+    }
+
+    [HttpPost("{id:guid}/credit-note")]
+    [HasPermission(PermissionCodes.AccountingCreate)]
+    public async Task<IActionResult> CreateCreditNote(Guid id, [FromBody] CreateCreditNoteRequest request)
+    {
+        var command = new CreateCreditNoteCommand(id, request.Date, request.Notes, request.Items);
         var result = await _mediator.Send(command);
         return result.Match(invoice => Ok(invoice), errors => Problem(errors));
     }
@@ -106,3 +116,8 @@ public class InvoiceController : ApiController
         return result.Match(_ => NoContent(), errors => Problem(errors));
     }
 }
+
+public record CreateCreditNoteRequest(
+    DateTime Date,
+    string? Notes,
+    List<Application.Features.Invoices.CreateReceivable.CreateInvoiceItemDto> Items);

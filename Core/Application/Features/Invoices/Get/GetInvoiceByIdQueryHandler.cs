@@ -24,7 +24,8 @@ public class GetInvoiceByIdQueryHandler : IRequestHandler<GetInvoiceByIdQuery, E
             e => e.Client!,
             e => e.Supplier!,
             e => e.Currency,
-            e => e.Items
+            e => e.Items,
+            e => e.OriginalInvoice!
         };
 
         var invoices = await _invoiceRepository.GetAsync(

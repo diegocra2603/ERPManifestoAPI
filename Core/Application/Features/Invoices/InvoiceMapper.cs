@@ -33,6 +33,10 @@ public static class InvoiceMapper
             invoice.FiscalSerie,
             invoice.FiscalNumero,
             invoice.FiscalAutorizacion,
+            invoice.OriginalInvoiceId?.Value,
+            invoice.OriginalInvoice?.InvoiceNumber,
+            invoice.OriginalInvoice?.FiscalSerie,
+            invoice.OriginalInvoice?.FiscalNumero,
             invoice.Items.Select(i => new InvoiceItemDto(
                 i.Id.Value,
                 i.Description,
