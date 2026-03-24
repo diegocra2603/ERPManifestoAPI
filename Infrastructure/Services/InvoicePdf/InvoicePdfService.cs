@@ -14,100 +14,140 @@ public sealed class InvoicePdfService : IInvoicePdfService
     private static readonly TimeZoneInfo GuatemalaTimezone =
         TimeZoneInfo.FindSystemTimeZoneById("America/Guatemala");
 
-    private const string HeaderBg = "#D9D9D9";
-    private const string CellBorder = "#000000";
-    private const float BorderWidth = 0.5f;
+    private const string LabelColor = "#9CA3AF";
+    private const string TextColor = "#111827";
+    private const string AccentColor = "#374151";
+    private const string DividerColor = "#E5E7EB";
+    private const string LightBg = "#F9FAFB";
+    private const string LogoUrl = "https://res.cloudinary.com/dlg9nca2v/image/upload/v1773634599/logo-negro-manifesto_xv1arl.png";
 
     private readonly FiscalDocumentConfiguration _config;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private static byte[]? _cachedLogo;
 
     public InvoicePdfService(
         IOptions<FiscalDocumentConfiguration> config,
         IHttpClientFactory httpClientFactory)
     {
         _config = config.Value;
+        _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<byte[]> GeneratePdfAsync(Invoice invoice)
+    private async Task<byte[]?> GetLogoAsync()
+    {
+        if (_cachedLogo is not null) return _cachedLogo;
+
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            _cachedLogo = await client.GetByteArrayAsync(LogoUrl);
+            return _cachedLogo;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<byte[]> GeneratePdfAsync(Invoice invoice, string? serieAdmin = null, long? numeroAdmin = null)
     {
         QuestPDF.Settings.License = LicenseType.Community;
+        var logoBytes = await GetLogoAsync();
 
         var documentTypeName = GetDocumentTypeName(invoice);
         var currencyCode = invoice.Currency?.Code ?? "GTQ";
+        var currencySymbol = currencyCode == "USD" ? "US$" : "Q";
 
         var document = Document.Create(container =>
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.Letter);
-                page.MarginHorizontal(40);
-                page.MarginVertical(30);
-                page.DefaultTextStyle(x => x.FontSize(8).FontColor("#000000").FontFamily("Helvetica"));
+                page.MarginHorizontal(50);
+                page.MarginVertical(40);
+                page.DefaultTextStyle(x => x.FontSize(9).FontColor(TextColor).FontFamily("Helvetica"));
 
                 page.Content().Column(col =>
                 {
-                    // === ENCABEZADO DEL DOCUMENTO ===
-                    ComposeDocumentHeader(col, invoice, documentTypeName);
+                    // ── HEADER: Logo area + Document type ──
+                    ComposeHeader(col, invoice, documentTypeName, logoBytes);
 
-                    // === ANULADA BANNER ===
-                    if (invoice.Status == InvoiceStatus.Anulada)
-                    {
-                        col.Item().PaddingVertical(6)
-                            .Border(2).BorderColor("#DC2626")
-                            .Background("#FEE2E2")
-                            .PaddingVertical(8)
-                            .Text("ANULADA")
-                            .FontSize(28).Bold().FontColor("#DC2626").AlignCenter();
-                    }
+                    col.Item().PaddingTop(20);
 
-                    // === DATOS DEL VENDEDOR ===
-                    ComposeDatosVendedor(col);
+                    // ── COMPANY INFO ──
+                    ComposeCompanyInfo(col);
 
-                    // === DATOS DEL COMPRADOR ===
-                    ComposeDatosComprador(col, invoice);
+                    col.Item().PaddingTop(16);
 
-                    // === DESCRIPCION DEL DOCUMENTO ===
-                    ComposeDescripcionDocumento(col, invoice, currencyCode);
+                    // ── BUYER INFO + DATES (two columns) ──
+                    ComposeBuyerAndDates(col, invoice, currencyCode);
 
-                    // === TOTAL EN QUETZALES ===
+                    col.Item().PaddingTop(12);
+
+                    // ── FISCAL DATA ──
+                    ComposeFiscalData(col, invoice);
+
+                    col.Item().PaddingTop(20);
+
+                    // ── DETALLE ──
+                    ComposeDetalle(col, invoice, currencySymbol);
+
+                    col.Item().PaddingTop(8);
+
+                    // ── TOTALES ──
+                    ComposeTotales(col, invoice, currencySymbol, currencyCode);
+
+                    col.Item().PaddingTop(16);
+
+                    // ── TOTAL EN LETRAS ──
                     ComposeTotalEnLetras(col, invoice, currencyCode);
 
-                    // === ISR (solo para facturas) ===
-                    if (_config.SujetoIsrTrimestral && documentTypeName == "FACTURA")
-                    {
-                        col.Item().PaddingTop(8)
-                            .Text("Sujeto a pagos trimestrales ISR")
-                            .FontSize(9).Bold().FontColor("#DC2626").AlignCenter();
-                    }
+                    col.Item().PaddingTop(8);
 
-                    // === FACTURA ASOCIADA (para notas de credito) ===
-                    if (documentTypeName == "NOTA DE CREDITO" && invoice.OriginalInvoice is not null)
+                    // ── ISR ──
+                    col.Item().Text("Sujeto a retenci\u00f3n definitiva ISR")
+                        .FontSize(8).FontColor(LabelColor).AlignCenter();
+
+                    // ── FACTURA ASOCIADA (credit notes) ──
+                    if (invoice.InvoiceType == InvoiceType.CreditNote && invoice.OriginalInvoice is not null)
                     {
                         var orig = invoice.OriginalInvoice;
                         var origDateUtc = DateTime.SpecifyKind(orig.Date, DateTimeKind.Utc);
                         var origFechaLocal = TimeZoneInfo.ConvertTimeFromUtc(origDateUtc, GuatemalaTimezone);
-                        var associatedText = $"Factura Asociada Serie {orig.FiscalSerie}  Numero {orig.FiscalNumero}  Fecha {origFechaLocal:dd/MM/yyyy}";
 
                         col.Item().PaddingTop(6)
-                            .Border(1).BorderColor("#DC2626")
-                            .PaddingVertical(4).PaddingHorizontal(8)
-                            .Text(associatedText)
-                            .FontSize(8).Bold().FontColor("#000000").AlignCenter();
+                            .Text($"Factura Asociada Serie {orig.FiscalSerie}  Numero {orig.FiscalNumero}  Fecha {origFechaLocal:dd/MM/yyyy}")
+                            .FontSize(8).FontColor(AccentColor).AlignCenter();
                     }
 
-                    // === DATOS DEL CERTIFICADOR ===
-                    ComposeDatosCertificador(col);
+                    col.Item().PaddingTop(16);
 
-                    // === DATOS ADICIONALES ===
-                    ComposeDatosAdicionales(col, invoice);
+                    // ── CERTIFICADOR ──
+                    ComposeCertificador(col);
+
+                    // ── DATOS ADICIONALES ──
+                    ComposeDatosAdicionales(col, serieAdmin, numeroAdmin);
                 });
 
-                page.Footer().AlignCenter().Text(text =>
+                // ── FOOTER ──
+                page.Footer().Row(footer =>
                 {
-                    text.DefaultTextStyle(x => x.FontSize(7).FontColor("#888888"));
-                    text.Span("Documento Tributario Electr\u00f3nico (DTE) \u2022 FEL Guatemala \u2022 P\u00e1gina ");
-                    text.CurrentPageNumber();
-                    text.Span(" de ");
-                    text.TotalPages();
+                    footer.ConstantItem(80).AlignLeft().AlignMiddle().Column(c =>
+                    {
+                        if (logoBytes is not null)
+                            c.Item().Height(20).Image(logoBytes).FitHeight();
+                        else
+                            c.Item().Text("manifesto").FontSize(10).Bold().FontColor(TextColor);
+                    });
+
+                    footer.RelativeItem().AlignRight().Text(text =>
+                    {
+                        text.DefaultTextStyle(x => x.FontSize(7).FontColor(LabelColor));
+                        text.Span("Documento Tributario Electr\u00f3nico (DTE) \u2022 FEL Guatemala \u2022 P\u00e1gina ");
+                        text.CurrentPageNumber();
+                        text.Span(" de ");
+                        text.TotalPages();
+                    });
                 });
             });
         });
@@ -116,307 +156,270 @@ public sealed class InvoicePdfService : IInvoicePdfService
     }
 
     // ──────────────────────────────────────────────
-    //  ENCABEZADO
+    //  HEADER
     // ──────────────────────────────────────────────
-    private void ComposeDocumentHeader(ColumnDescriptor col, Invoice invoice, string documentTypeName)
+    private static void ComposeHeader(ColumnDescriptor col, Invoice invoice, string documentTypeName, byte[]? logoBytes)
     {
-        col.Item().Border(BorderWidth).BorderColor(CellBorder).Column(header =>
+        col.Item().Row(row =>
         {
-            // DOCUMENTO TRIBUTARIO ELECTRONICO
-            header.Item()
-                .Background(HeaderBg)
-                .PaddingVertical(4)
-                .Text("DOCUMENTO TRIBUTARIO ELECTRONICO")
-                .FontSize(9).Bold().AlignCenter();
-
-            // Tipo de documento + Serie y Numero
-            header.Item().PaddingVertical(6).Column(info =>
+            // Left: logo
+            row.RelativeItem().AlignLeft().AlignBottom().Column(logo =>
             {
-                info.Item().Text(documentTypeName)
-                    .FontSize(16).Bold().AlignCenter();
+                if (logoBytes is not null)
+                    logo.Item().Height(60).Image(logoBytes).FitHeight();
+                else
+                    logo.Item().Text("M.").FontSize(48).Bold().FontColor(TextColor);
+            });
 
-                var hasFiscal = !string.IsNullOrWhiteSpace(invoice.FiscalSerie)
-                                && !invoice.FiscalSerie.StartsWith("CONTINGENCIA");
+            // Right: document type + number
+            row.RelativeItem().AlignRight().AlignBottom().Column(right =>
+            {
+                right.Item().AlignRight()
+                    .Text(documentTypeName)
+                    .FontSize(28).Bold().FontColor(TextColor);
 
-                if (hasFiscal)
-                {
-                    info.Item().PaddingTop(2)
-                        .Text($"Serie: {invoice.FiscalSerie}  Numero: {invoice.FiscalNumero}")
-                        .FontSize(9).AlignCenter();
-
-                    info.Item().PaddingTop(4).PaddingHorizontal(20).Row(row =>
-                    {
-                        row.RelativeItem().Column(c =>
-                        {
-                            c.Item().Text("Numero de Autorizaci\u00f3n:")
-                                .FontSize(7).Bold().FontColor("#DC2626");
-                            c.Item().Text(invoice.FiscalAutorizacion ?? "-")
-                                .FontSize(7);
-                        });
-                    });
-                }
-
-                // Contingencia
-                if (invoice.FiscalSerie is not null && invoice.FiscalSerie.StartsWith("CONTINGENCIA"))
-                {
-                    var numAcceso = invoice.FiscalSerie.Replace("CONTINGENCIA-", "");
-                    info.Item().PaddingTop(4)
-                        .Text("DOCUMENTO EN CONTINGENCIA")
-                        .FontSize(10).Bold().FontColor("#92400E").AlignCenter();
-                    info.Item().Text($"N\u00famero de Acceso: {numAcceso}")
-                        .FontSize(9).Bold().FontColor("#92400E").AlignCenter();
-                }
-
-                // Fecha de Emisión
-                var dateUtc = DateTime.SpecifyKind(invoice.Date, DateTimeKind.Utc);
-                var fechaLocal = TimeZoneInfo.ConvertTimeFromUtc(dateUtc, GuatemalaTimezone);
-
-                info.Item().PaddingTop(4).PaddingHorizontal(20).Row(row =>
-                {
-                    row.RelativeItem().Column(c =>
-                    {
-                        c.Item().Text("Fecha de Emisi\u00f3n:")
-                            .FontSize(7).Bold().FontColor("#DC2626");
-                        c.Item().Text(fechaLocal.ToString("dd/MM/yyyy"))
-                            .FontSize(8);
-                    });
-                });
+                right.Item().AlignRight().PaddingTop(2)
+                    .Text($"#{invoice.InvoiceNumber}")
+                    .FontSize(11).FontColor(LabelColor);
             });
         });
     }
 
     // ──────────────────────────────────────────────
-    //  DATOS DEL VENDEDOR
+    //  COMPANY INFO
     // ──────────────────────────────────────────────
-    private void ComposeDatosVendedor(ColumnDescriptor col)
+    private void ComposeCompanyInfo(ColumnDescriptor col)
     {
-        col.Item().Border(BorderWidth).BorderColor(CellBorder).Column(section =>
+        col.Item().Column(company =>
         {
-            // Section header
-            section.Item()
-                .Background(HeaderBg)
-                .PaddingVertical(3)
-                .Text("DATOS DEL VENDEDOR")
-                .FontSize(8).Bold().AlignCenter();
+            company.Item().Text(_config.NombreComercial)
+                .FontSize(14).Bold().FontColor(TextColor);
 
-            // NIT y Nombre
-            section.Item().Table(table =>
-            {
-                table.ColumnsDefinition(columns =>
-                {
-                    columns.ConstantColumn(150);
-                    columns.RelativeColumn();
-                });
+            company.Item().PaddingTop(2)
+                .Text($"NIT  {_config.Nit}")
+                .FontSize(9).FontColor(LabelColor);
 
-                // Row: NIT + Nombre
-                TableCell(table, "NIT del contribuyente", true);
-                TableCell(table, "Nombre, raz\u00f3n o denominaci\u00f3n social del contribuyente", true);
-
-                TableCell(table, _config.Nit);
-                TableCell(table, _config.NombreComercial);
-            });
-
-            // Nombre comercial
-            section.Item().Table(table =>
-            {
-                table.ColumnsDefinition(columns =>
-                {
-                    columns.ConstantColumn(150);
-                    columns.RelativeColumn();
-                });
-
-                TableCell(table, "NOMBRE DE ESTABLECIMIENTO\nCOMERCIAL", true);
-                TableCell(table, _config.NombreComercial);
-            });
-
-            // Dirección
-            section.Item().Table(table =>
-            {
-                table.ColumnsDefinition(columns =>
-                {
-                    columns.ConstantColumn(150);
-                    columns.RelativeColumn();
-                });
-
-                TableCell(table, "DIRECCION", true);
-                TableCell(table, _config.DireccionEmisor);
-            });
+            company.Item().PaddingTop(1)
+                .Text(_config.DireccionEmisor)
+                .FontSize(9).FontColor(LabelColor);
         });
     }
 
     // ──────────────────────────────────────────────
-    //  DATOS DEL COMPRADOR
+    //  BUYER INFO + DATES
     // ──────────────────────────────────────────────
-    private static void ComposeDatosComprador(ColumnDescriptor col, Invoice invoice)
+    private static void ComposeBuyerAndDates(ColumnDescriptor col, Invoice invoice, string currencyCode)
     {
-        col.Item().Border(BorderWidth).BorderColor(CellBorder).Column(section =>
+        var dateUtc = DateTime.SpecifyKind(invoice.Date, DateTimeKind.Utc);
+        var fechaLocal = TimeZoneInfo.ConvertTimeFromUtc(dateUtc, GuatemalaTimezone);
+
+        col.Item().Row(row =>
         {
-            // Section header
-            section.Item()
-                .Background(HeaderBg)
-                .PaddingVertical(3)
-                .Text("DATOS DEL COMPRADOR")
-                .FontSize(8).Bold().AlignCenter();
-
-            section.Item().Table(table =>
+            // Left column: dates + currency
+            row.RelativeItem().Column(left =>
             {
-                table.ColumnsDefinition(columns =>
+                LabelValue(left, "Fecha de Emisi\u00f3n", fechaLocal.ToString("dd/MM/yyyy"));
+
+                if (invoice.DueDate.HasValue)
                 {
-                    columns.ConstantColumn(150);
-                    columns.RelativeColumn();
-                });
+                    var dueDateUtc = DateTime.SpecifyKind(invoice.DueDate.Value, DateTimeKind.Utc);
+                    var dueDateLocal = TimeZoneInfo.ConvertTimeFromUtc(dueDateUtc, GuatemalaTimezone);
+                    LabelValue(left, "Fecha de Vencimiento", dueDateLocal.ToString("dd/MM/yyyy"));
+                }
 
-                // Headers
-                TableCell(table, "NIT", true);
-                TableCell(table, "Nombre, raz\u00f3n o denominaci\u00f3n social del contribuyente", true);
+                LabelValue(left, "Moneda", currencyCode);
 
-                // Values
-                TableCell(table, invoice.Nit);
+                if (currencyCode != "GTQ" && invoice.ExchangeRate != 1)
+                {
+                    LabelValue(left, "Tasa de Cambio", invoice.ExchangeRate.ToString("N2"));
+                }
+            });
+
+            row.ConstantItem(20);
+
+            // Right column: buyer
+            row.RelativeItem().Column(right =>
+            {
+                LabelValue(right, "NIT", invoice.Nit);
 
                 var displayName = invoice.Client is not null && !string.IsNullOrWhiteSpace(invoice.Client.LegalName)
                     ? invoice.Client.LegalName
                     : invoice.Name;
-                TableCell(table, displayName);
+                LabelValue(right, "Nombre", displayName);
+
+                if (!string.IsNullOrWhiteSpace(invoice.Address))
+                {
+                    LabelValue(right, "Direcci\u00f3n", invoice.Address);
+                }
+            });
+        });
+    }
+
+    // ──────────────────────────────────────────────
+    //  FISCAL DATA
+    // ──────────────────────────────────────────────
+    private static void ComposeFiscalData(ColumnDescriptor col, Invoice invoice)
+    {
+        var hasFiscal = !string.IsNullOrWhiteSpace(invoice.FiscalSerie)
+                        && !invoice.FiscalSerie.StartsWith("CONTINGENCIA");
+
+        if (!hasFiscal && invoice.FiscalSerie?.StartsWith("CONTINGENCIA") != true)
+            return;
+
+        // Contingency banner
+        if (invoice.FiscalSerie is not null && invoice.FiscalSerie.StartsWith("CONTINGENCIA"))
+        {
+            var numAcceso = invoice.FiscalSerie.Replace("CONTINGENCIA-", "");
+            col.Item().Background("#FEF3C7").Padding(8).Column(c =>
+            {
+                c.Item().Text("DOCUMENTO EN CONTINGENCIA")
+                    .FontSize(10).Bold().FontColor("#92400E").AlignCenter();
+                c.Item().Text($"N\u00famero de Acceso: {numAcceso}")
+                    .FontSize(9).FontColor("#92400E").AlignCenter();
+            });
+            return;
+        }
+
+        // Voided banner
+        if (invoice.Status == InvoiceStatus.Anulada)
+        {
+            col.Item().PaddingBottom(8).Background("#FEE2E2").Padding(8)
+                .Text("ANULADA")
+                .FontSize(20).Bold().FontColor("#DC2626").AlignCenter();
+        }
+
+        col.Item().Row(row =>
+        {
+            row.RelativeItem().Column(left =>
+            {
+                LabelValue(left, "Serie", invoice.FiscalSerie ?? "-");
+                LabelValue(left, "N\u00famero DTE", invoice.FiscalNumero ?? "-");
             });
 
-            // Dirección del comprador (si existe)
-            if (!string.IsNullOrWhiteSpace(invoice.Address))
+            row.ConstantItem(20);
+
+            row.RelativeItem().Column(right =>
             {
-                section.Item().Table(table =>
+                LabelValue(right, "N\u00famero de Autorizaci\u00f3n",
+                    invoice.FiscalAutorizacion ?? "-");
+            });
+        });
+    }
+
+    // ──────────────────────────────────────────────
+    //  DETALLE
+    // ──────────────────────────────────────────────
+    private static void ComposeDetalle(ColumnDescriptor col, Invoice invoice, string currencySymbol)
+    {
+        var items = invoice.Items.OrderBy(i => i.LineOrder).ToList();
+
+        col.Item().Column(section =>
+        {
+            // Section title
+            section.Item().Text("Detalle")
+                .FontSize(14).Bold().FontColor(TextColor);
+
+            section.Item().PaddingTop(6)
+                .LineHorizontal(1).LineColor(DividerColor);
+
+            foreach (var item in items)
+            {
+                section.Item().PaddingVertical(8).Row(row =>
                 {
-                    table.ColumnsDefinition(columns =>
+                    row.RelativeItem().Column(left =>
                     {
-                        columns.ConstantColumn(150);
-                        columns.RelativeColumn();
+                        left.Item().Text(item.Description)
+                            .FontSize(9).Bold().FontColor(TextColor);
+
+                        left.Item().PaddingTop(1)
+                            .Text($"{item.Quantity:N2} x {currencySymbol} {item.UnitPrice:N2}")
+                            .FontSize(8).FontColor(LabelColor);
                     });
 
-                    TableCell(table, "DIRECCION", true);
-                    TableCell(table, invoice.Address);
+                    row.ConstantItem(100).AlignRight().AlignMiddle()
+                        .Text($"{currencySymbol} {item.Total:N2}")
+                        .FontSize(10).Bold().FontColor(TextColor);
                 });
+
+                section.Item().LineHorizontal(0.5f).LineColor(DividerColor);
             }
         });
     }
 
     // ──────────────────────────────────────────────
-    //  DESCRIPCION DEL DOCUMENTO
+    //  TOTALES
     // ──────────────────────────────────────────────
-    private static void ComposeDescripcionDocumento(ColumnDescriptor col, Invoice invoice, string currencyCode)
+    private static void ComposeTotales(ColumnDescriptor col, Invoice invoice, string currencySymbol, string currencyCode)
     {
-        var symbol = currencyCode == "USD" ? "$" : "Q";
-        var items = invoice.Items.OrderBy(i => i.LineOrder).ToList();
-
-        col.Item().Border(BorderWidth).BorderColor(CellBorder).Column(section =>
+        col.Item().Row(row =>
         {
-            // Section header
-            section.Item()
-                .Background(HeaderBg)
-                .Border(BorderWidth).BorderColor(CellBorder)
-                .PaddingVertical(3)
-                .Text("DESCRIPCION DEL DOCUMENTO")
-                .FontSize(8).Bold().AlignCenter();
+            row.RelativeItem(); // spacer
 
-            // Table header row
-            section.Item().Table(table =>
+            row.ConstantItem(250).Column(totals =>
             {
-                table.ColumnsDefinition(columns =>
+                // Subtotal
+                TotalRow(totals, "Subtotal", $"{currencySymbol} {invoice.Subtotal:N2}", false);
+
+                // IVA
+                TotalRow(totals, "IVA (12%)", $"{currencySymbol} {invoice.TaxAmount:N2}", false);
+
+                // Divider
+                totals.Item().PaddingVertical(4)
+                    .LineHorizontal(1).LineColor(DividerColor);
+
+                // Total
+                totals.Item().PaddingVertical(2).Row(r =>
                 {
-                    columns.ConstantColumn(55);  // CANTIDAD
-                    columns.RelativeColumn();     // DESCRIPCION
-                    columns.ConstantColumn(65);   // PRECIO UNITARIO
-                    columns.ConstantColumn(65);   // SUB-TOTAL
-                    columns.ConstantColumn(60);   // DESCUENTO
-                    columns.ConstantColumn(70);   // TOTAL
+                    r.RelativeItem().AlignLeft()
+                        .Text("Total")
+                        .FontSize(12).Bold().FontColor(TextColor);
+                    r.RelativeItem().AlignRight()
+                        .Text($"{currencySymbol} {invoice.Total:N2}")
+                        .FontSize(14).Bold().FontColor(TextColor);
                 });
-
-                // Column headers
-                TableHeaderCell(table, "CANTIDAD");
-                TableHeaderCell(table, "DESCRIPCION");
-                TableHeaderCell(table, "PRECIO\nUNITARIO");
-                TableHeaderCell(table, "SUB-TOTAL");
-                TableHeaderCell(table, "DESCUENTO");
-                TableHeaderCell(table, $"TOTAL {symbol}");
-
-                // Items
-                foreach (var item in items)
-                {
-                    TableNumberCell(table, item.Quantity.ToString("N2"));
-                    TableCell(table, item.Description);
-                    TableNumberCell(table, FormatAmount(item.UnitPrice));
-                    TableNumberCell(table, FormatAmount(item.Subtotal));
-                    TableNumberCell(table, ""); // Descuento - not implemented yet
-                    TableNumberCell(table, FormatAmount(item.Total));
-                }
-
-                // Totals row
-                TableNumberCell(table, "");
-                TableCell(table, "");
-                TableNumberCell(table, "");
-                TableNumberCell(table, FormatAmount(invoice.Subtotal));
-                TableNumberCell(table, "");
-                TableNumberCell(table, FormatAmount(invoice.Total));
             });
         });
     }
 
     // ──────────────────────────────────────────────
-    //  TOTAL EN QUETZALES / DOLARES
+    //  TOTAL EN LETRAS
     // ──────────────────────────────────────────────
     private static void ComposeTotalEnLetras(ColumnDescriptor col, Invoice invoice, string currencyCode)
     {
-        var currencyName = currencyCode == "USD" ? "DOLARES" : "QUETZALES";
-        var centavos = (int)Math.Round((invoice.Total - Math.Floor(invoice.Total)) * 100);
+        var currencyName = currencyCode == "USD" ? "D\u00f3lares" : "Quetzales";
+        var totalEnLetras = NumberToWords(invoice.Total);
 
-        col.Item().Border(BorderWidth).BorderColor(CellBorder).Table(table =>
-        {
-            table.ColumnsDefinition(columns =>
-            {
-                columns.ConstantColumn(150);
-                columns.RelativeColumn();
-            });
-
-            table.Cell()
-                .Border(BorderWidth).BorderColor(CellBorder)
-                .Padding(4)
-                .Text($"TOTAL EN {currencyName}")
-                .FontSize(8).Bold();
-
-            table.Cell()
-                .Border(BorderWidth).BorderColor(CellBorder)
-                .Padding(4)
-                .Text($"CON {centavos:D2}/100")
-                .FontSize(8).Bold();
-        });
+        col.Item().Background(LightBg).Padding(8)
+            .Text($"Total en {currencyName}: {totalEnLetras}")
+            .FontSize(8).FontColor(AccentColor).AlignCenter();
     }
 
     // ──────────────────────────────────────────────
-    //  DATOS DEL CERTIFICADOR
+    //  CERTIFICADOR
     // ──────────────────────────────────────────────
-    private void ComposeDatosCertificador(ColumnDescriptor col)
+    private void ComposeCertificador(ColumnDescriptor col)
     {
         if (string.IsNullOrWhiteSpace(_config.NitCertificador)) return;
 
-        col.Item().PaddingTop(6).Border(BorderWidth).BorderColor(CellBorder).Column(section =>
+        col.Item().Column(section =>
         {
-            // Section header
-            section.Item()
-                .Background(HeaderBg)
-                .PaddingVertical(3)
-                .Text("DATOS DEL CERTIFICADOR")
-                .FontSize(8).Bold().AlignCenter();
+            section.Item().LineHorizontal(0.5f).LineColor(DividerColor);
 
-            section.Item().Table(table =>
+            section.Item().PaddingTop(8).Row(row =>
             {
-                table.ColumnsDefinition(columns =>
+                row.RelativeItem().Column(left =>
                 {
-                    columns.ConstantColumn(150);
-                    columns.RelativeColumn();
+                    left.Item().Text("Certificador").FontSize(7).FontColor(LabelColor);
+                    left.Item().Text(_config.NombreCertificador).FontSize(8).FontColor(AccentColor);
                 });
 
-                TableCell(table, "NIT del contribuyente", true);
-                TableCell(table, "Nombre, raz\u00f3n o denominaci\u00f3n social del contribuyente", true);
+                row.ConstantItem(20);
 
-                TableCell(table, _config.NitCertificador);
-                TableCell(table, _config.NombreCertificador);
+                row.RelativeItem().Column(right =>
+                {
+                    right.Item().Text("NIT Certificador").FontSize(7).FontColor(LabelColor);
+                    right.Item().Text(_config.NitCertificador).FontSize(8).FontColor(AccentColor);
+                });
             });
         });
     }
@@ -424,50 +427,22 @@ public sealed class InvoicePdfService : IInvoicePdfService
     // ──────────────────────────────────────────────
     //  DATOS ADICIONALES
     // ──────────────────────────────────────────────
-    private static void ComposeDatosAdicionales(ColumnDescriptor col, Invoice invoice)
+    private static void ComposeDatosAdicionales(ColumnDescriptor col, string? serieAdmin, long? numeroAdmin)
     {
-        col.Item().PaddingTop(6).Border(BorderWidth).BorderColor(CellBorder).Column(section =>
+        col.Item().PaddingTop(8).Row(row =>
         {
-            // Section header
-            section.Item()
-                .Background(HeaderBg)
-                .PaddingVertical(3)
-                .Text("DATOS ADICIONALES")
-                .FontSize(8).Bold().AlignCenter();
-
-            section.Item().Table(table =>
+            row.RelativeItem().Column(left =>
             {
-                table.ColumnsDefinition(columns =>
-                {
-                    columns.ConstantColumn(150);
-                    columns.RelativeColumn();
-                });
+                left.Item().Text("Serie Admin").FontSize(7).FontColor(LabelColor);
+                left.Item().Text(serieAdmin ?? "A").FontSize(8).FontColor(AccentColor);
+            });
 
-                // Headers
-                TableCell(table, "Campo", true);
-                TableCell(table, "Valor", true);
+            row.ConstantItem(20);
 
-                // Invoice number
-                TableCell(table, "Numero Factura");
-                TableCell(table, invoice.InvoiceNumber);
-
-                // Moneda
-                TableCell(table, "Moneda");
-                TableCell(table, invoice.Currency?.Code ?? "GTQ");
-
-                // Tipo de cambio (si no es 1)
-                if (invoice.ExchangeRate != 1)
-                {
-                    TableCell(table, "Tipo de Cambio");
-                    TableCell(table, invoice.ExchangeRate.ToString("N2"));
-                }
-
-                // Fecha de vencimiento
-                if (invoice.DueDate.HasValue)
-                {
-                    TableCell(table, "Fecha Vencimiento");
-                    TableCell(table, invoice.DueDate.Value.ToString("dd/MM/yyyy"));
-                }
+            row.RelativeItem().Column(right =>
+            {
+                right.Item().Text("Numero Admin").FontSize(7).FontColor(LabelColor);
+                right.Item().Text(numeroAdmin?.ToString() ?? "-").FontSize(8).FontColor(AccentColor);
             });
         });
     }
@@ -481,42 +456,130 @@ public sealed class InvoicePdfService : IInvoicePdfService
         return invoice.InvoiceType switch
         {
             InvoiceType.Receivable => "FACTURA",
-            InvoiceType.CreditNote => "NOTA DE CREDITO",
+            InvoiceType.CreditNote => "NOTA DE CR\u00c9DITO",
             InvoiceType.Payable => "FACTURA ESPECIAL",
             _ => "FACTURA"
         };
     }
 
-    private static void TableCell(TableDescriptor table, string text, bool isHeader = false)
+    private static void LabelValue(ColumnDescriptor col, string label, string value)
     {
-        var cell = table.Cell()
-            .Border(BorderWidth).BorderColor(CellBorder)
-            .Padding(3);
-
-        if (isHeader)
-            cell.Background(HeaderBg).Text(text).FontSize(7).Bold();
-        else
-            cell.Text(text).FontSize(8);
+        col.Item().PaddingBottom(8).Column(c =>
+        {
+            c.Item().Text(label).FontSize(7).FontColor(LabelColor);
+            c.Item().Text(value).FontSize(9).Bold().FontColor(TextColor);
+        });
     }
 
-    private static void TableHeaderCell(TableDescriptor table, string text)
+    private static void TotalRow(ColumnDescriptor col, string label, string value, bool isBold)
     {
-        table.Cell()
-            .Border(BorderWidth).BorderColor(CellBorder)
-            .Background(HeaderBg)
-            .Padding(3)
-            .AlignCenter()
-            .Text(text).FontSize(7).Bold().AlignCenter();
+        col.Item().PaddingVertical(2).Row(row =>
+        {
+            var labelText = row.RelativeItem().AlignLeft().Text(label).FontSize(9);
+            var valueText = row.RelativeItem().AlignRight().Text(value).FontSize(9);
+
+            if (isBold)
+            {
+                labelText.Bold().FontColor(TextColor);
+                valueText.Bold().FontColor(TextColor);
+            }
+            else
+            {
+                labelText.FontColor(LabelColor);
+                valueText.FontColor(LabelColor);
+            }
+        });
     }
 
-    private static void TableNumberCell(TableDescriptor table, string text)
+    // ──────────────────────────────────────────────
+    //  NUMBER TO WORDS (Spanish)
+    // ──────────────────────────────────────────────
+    private static string NumberToWords(decimal amount)
     {
-        table.Cell()
-            .Border(BorderWidth).BorderColor(CellBorder)
-            .Padding(3)
-            .AlignRight()
-            .Text(text).FontSize(8).AlignRight();
+        var intPart = (long)Math.Floor(Math.Abs(amount));
+        var centavos = (int)Math.Round((Math.Abs(amount) - intPart) * 100);
+
+        var words = IntToWords(intPart).ToUpper();
+        return $"{words} CON {centavos:D2}/100";
     }
 
-    private static string FormatAmount(decimal amount) => amount.ToString("N2");
+    private static string IntToWords(long n)
+    {
+        if (n == 0) return "cero";
+        if (n < 0) return "menos " + IntToWords(-n);
+
+        var parts = new List<string>();
+
+        if (n >= 1_000_000)
+        {
+            var millions = n / 1_000_000;
+            parts.Add(millions == 1 ? "un mill\u00f3n" : IntToWords(millions) + " millones");
+            n %= 1_000_000;
+        }
+
+        if (n >= 1000)
+        {
+            var thousands = n / 1000;
+            parts.Add(thousands == 1 ? "mil" : IntToWords(thousands) + " mil");
+            n %= 1000;
+        }
+
+        if (n >= 100)
+        {
+            if (n == 100)
+            {
+                parts.Add("cien");
+                n = 0;
+            }
+            else
+            {
+                parts.Add(((int)(n / 100)) switch
+                {
+                    1 => "ciento", 2 => "doscientos", 3 => "trescientos",
+                    4 => "cuatrocientos", 5 => "quinientos", 6 => "seiscientos",
+                    7 => "setecientos", 8 => "ochocientos", 9 => "novecientos", _ => ""
+                });
+                n %= 100;
+            }
+        }
+
+        if (n >= 30)
+        {
+            parts.Add(((int)(n / 10)) switch
+            {
+                3 => "treinta", 4 => "cuarenta", 5 => "cincuenta",
+                6 => "sesenta", 7 => "setenta", 8 => "ochenta", 9 => "noventa", _ => ""
+            });
+            n %= 10;
+            if (n > 0) parts.Add("y");
+        }
+
+        if (n >= 20)
+        {
+            var r = n - 20;
+            parts.Add(r == 0 ? "veinte" : "veinti" + UnitsWord(r));
+            n = 0;
+        }
+
+        if (n >= 10)
+        {
+            parts.Add(n switch
+            {
+                10 => "diez", 11 => "once", 12 => "doce", 13 => "trece",
+                14 => "catorce", 15 => "quince", 16 => "diecis\u00e9is",
+                17 => "diecisiete", 18 => "dieciocho", 19 => "diecinueve", _ => ""
+            });
+            n = 0;
+        }
+
+        if (n > 0) parts.Add(UnitsWord(n));
+
+        return string.Join(" ", parts);
+    }
+
+    private static string UnitsWord(long n) => n switch
+    {
+        1 => "uno", 2 => "dos", 3 => "tres", 4 => "cuatro", 5 => "cinco",
+        6 => "seis", 7 => "siete", 8 => "ocho", 9 => "nueve", _ => ""
+    };
 }

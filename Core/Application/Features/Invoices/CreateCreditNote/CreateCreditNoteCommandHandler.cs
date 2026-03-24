@@ -57,14 +57,14 @@ public class CreateCreditNoteCommandHandler : IRequestHandler<CreateCreditNoteCo
                 return Error.Validation("Invoice.InvalidItem", "La cantidad y el precio deben ser mayores a 0.");
         }
 
-        var creditNoteTotal = request.Items.Sum(i => i.Quantity * i.UnitPrice * 1.12m);
+        var creditNoteTotal = Math.Round(request.Items.Sum(i => Math.Round(i.Quantity * i.UnitPrice, 2) + Math.Round(i.Quantity * i.UnitPrice * 0.12m, 2)), 2);
         if (creditNoteTotal > original.Total)
             return Error.Validation("Invoice.ExceedsOriginal",
                 $"El total de la nota de crédito (Q{creditNoteTotal:N2}) no puede exceder el total de la factura original (Q{original.Total:N2}).");
 
-        // Generate credit note number
+        // Generate credit note number (count ALL credit notes including deleted to avoid unique constraint violations)
         var existingCreditNotes = await _invoiceRepository.GetAsync(
-            i => i.InvoiceType == InvoiceType.CreditNote && i.AuditField.IsActive);
+            i => i.InvoiceType == InvoiceType.CreditNote);
         var creditNoteNumber = "NC-" + (existingCreditNotes.Count + 1).ToString("D6");
 
         var creditNoteId = new InvoiceId(Guid.NewGuid());

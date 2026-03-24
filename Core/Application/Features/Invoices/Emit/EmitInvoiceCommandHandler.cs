@@ -15,6 +15,7 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
 {
     private readonly IAsyncRepository<Invoice> _invoiceRepository;
     private readonly IAsyncRepository<TaxConfiguration> _taxConfigRepository;
+    private readonly IAsyncRepository<Domain.Entities.FiscalDocuments.FiscalDocument> _fiscalDocRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IFiscalDocumentService _fiscalDocumentService;
     private readonly IInvoiceAccountingService _accountingService;
@@ -22,12 +23,14 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
     public EmitInvoiceCommandHandler(
         IAsyncRepository<Invoice> invoiceRepository,
         IAsyncRepository<TaxConfiguration> taxConfigRepository,
+        IAsyncRepository<Domain.Entities.FiscalDocuments.FiscalDocument> fiscalDocRepository,
         IUnitOfWork unitOfWork,
         IFiscalDocumentService fiscalDocumentService,
         IInvoiceAccountingService accountingService)
     {
         _invoiceRepository = invoiceRepository;
         _taxConfigRepository = taxConfigRepository;
+        _fiscalDocRepository = fiscalDocRepository;
         _unitOfWork = unitOfWork;
         _fiscalDocumentService = fiscalDocumentService;
         _accountingService = accountingService;
@@ -76,24 +79,69 @@ public class EmitInvoiceCommandHandler : IRequestHandler<EmitInvoiceCommand, Err
             ? CurrencyType.Dolar
             : CurrencyType.Quetzal;
 
-        // Build fiscal items
-        var fiscalItems = invoice.Items.OrderBy(i => i.LineOrder).Select(item => new GenerateDocumentItemRequest(
-            ProductCode: item.LineOrder.ToString(),
-            Description: item.Description,
-            MeasureUnit: 1,
-            Quantity: item.Quantity,
-            Price: item.UnitPrice,
-            DiscountPercentage: 0,
-            SaleType: SaleType.Servicios
-        )).ToList();
-
-        // For credit notes, include associated document data (original invoice)
+        // Build fiscal items and associated document data
+        List<GenerateDocumentItemRequest> fiscalItems;
         string? docAsociadoSerie = null;
         string? docAsociadoPreimpreso = null;
+
         if (invoice.InvoiceType == InvoiceType.CreditNote && invoice.OriginalInvoice is not null)
         {
             docAsociadoSerie = invoice.OriginalInvoice.FiscalSerie;
             docAsociadoPreimpreso = invoice.OriginalInvoice.FiscalNumero;
+
+            // For credit notes, use the original FiscalDocument's items to match SAT amounts exactly
+            Domain.Entities.FiscalDocuments.FiscalDocument? originalFiscalDoc = null;
+            if (!string.IsNullOrEmpty(docAsociadoSerie) && !string.IsNullOrEmpty(docAsociadoPreimpreso))
+            {
+                var fiscalDocs = await _fiscalDocRepository.GetAsync(
+                    predicate: fd => fd.Serie == docAsociadoSerie &&
+                                     fd.Preimpreso == docAsociadoPreimpreso &&
+                                     fd.Status == FiscalDocumentStatus.Certified &&
+                                     fd.AuditField.IsActive,
+                    includeString: "Items");
+
+                originalFiscalDoc = fiscalDocs.FirstOrDefault();
+            }
+
+            if (originalFiscalDoc is not null && originalFiscalDoc.Items.Any())
+            {
+                // Use the exact prices that were sent to SAT for the original invoice
+                fiscalItems = originalFiscalDoc.Items.Select(fi => new GenerateDocumentItemRequest(
+                    ProductCode: fi.ProductCode,
+                    Description: fi.Description,
+                    MeasureUnit: fi.MeasureUnit,
+                    Quantity: fi.Quantity,
+                    Price: fi.Price,
+                    DiscountPercentage: fi.DiscountPercentage,
+                    SaleType: fi.SaleType
+                )).ToList();
+            }
+            else
+            {
+                // Fallback: build from invoice items with IVA-inclusive price
+                fiscalItems = invoice.Items.OrderBy(i => i.LineOrder).Select(item => new GenerateDocumentItemRequest(
+                    ProductCode: item.LineOrder.ToString(),
+                    Description: item.Description,
+                    MeasureUnit: 1,
+                    Quantity: item.Quantity,
+                    Price: Math.Round(item.Total / item.Quantity, 2),
+                    DiscountPercentage: 0,
+                    SaleType: SaleType.Servicios
+                )).ToList();
+            }
+        }
+        else
+        {
+            // Regular invoices: Price must include IVA (Ainnova/FEL expects IVA-inclusive prices)
+            fiscalItems = invoice.Items.OrderBy(i => i.LineOrder).Select(item => new GenerateDocumentItemRequest(
+                ProductCode: item.LineOrder.ToString(),
+                Description: item.Description,
+                MeasureUnit: 1,
+                Quantity: item.Quantity,
+                Price: Math.Round(item.Total / item.Quantity, 2),
+                DiscountPercentage: 0,
+                SaleType: SaleType.Servicios
+            )).ToList();
         }
 
         // Send to Ainnova - pass exchange rate and tax percentage from accounting entities
